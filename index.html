@@ -9,6 +9,12 @@
   <link rel="icon" href="src/assets/favicon.ico" type="image/x-icon" />
 </head>
 <body>
+  <!-- Banner de erro para falhas no carregamento do JSON -->
+  <div id="error-banner" class="error-banner" role="alert" hidden>
+    <span id="error-banner-message">Erro ao carregar objetivos — ver console / arquivo src/data/syllabus_rfcp.json</span>
+    <button id="error-banner-close" class="error-banner-close" aria-label="Fechar mensagem de erro">&times;</button>
+  </div>
+
   <header>
     <h1>Rastreador de Estudos RFCP®</h1>
     <p>
@@ -38,7 +44,7 @@
         <div class="contribution-legend">
           <div class="legend-item">
             <div class="legend-color empty"></div>
-            <span>Zero</span>
+            <span>Nenhum</span>
           </div>
           <div class="legend-item">
             <div class="legend-color level-1"></div>
@@ -57,6 +63,15 @@
             <span>10+</span>
           </div>
         </div>
+      </div>
+
+      <!-- Botões de gerenciamento de progresso -->
+      <div class="progress-actions">
+        <button id="btn-export" class="action-btn" aria-label="Exportar progresso como arquivo JSON">Exportar progresso</button>
+        <button id="btn-import" class="action-btn" aria-label="Importar progresso de um arquivo JSON">Importar progresso</button>
+        <input type="file" id="import-file" accept=".json" hidden aria-hidden="true">
+        <button id="btn-reset" class="action-btn action-btn-danger" aria-label="Resetar todo o progresso">Resetar progresso</button>
+        <button id="btn-demo" class="action-btn action-btn-secondary" aria-label="Popular progresso com dados de demonstração">Popular demo</button>
       </div>
     </div>
 

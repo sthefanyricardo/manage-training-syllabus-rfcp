@@ -4,6 +4,43 @@
     box-sizing: border-box;
 }
 
+/* Error banner styles */
+.error-banner {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 1rem 1.5rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.error-banner[hidden] {
+    display: none;
+}
+
+.error-banner-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #721c24;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.error-banner-close:hover {
+    opacity: 0.7;
+}
+
+.error-banner-close:focus {
+    outline: 2px solid #721c24;
+    outline-offset: 2px;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.6;
@@ -278,4 +315,60 @@ footer {
         max-width: 800px;
         margin: 0 auto 2.5rem;
     }
+}
+
+/* Progress action buttons */
+.progress-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    justify-content: center;
+}
+
+.action-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    background: #f0f0f0;
+}
+
+.action-btn:focus {
+    outline: 2px solid #4285F4;
+    outline-offset: 2px;
+}
+
+.action-btn-secondary {
+    background: #6c757d;
+    color: white;
+    border-color: #6c757d;
+}
+
+.action-btn-secondary:hover {
+    background: #5a6268;
+}
+
+.action-btn-danger {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+.action-btn-danger:hover {
+    background: #c82333;
+}
+
+/* Focus styles for accessibility */
+.complete-button:focus,
+.mark-complete-btn:focus,
+.filter-btn:focus {
+    outline: 2px solid #4285F4;
+    outline-offset: 2px;
 }

@@ -23,7 +23,7 @@ Uma ferramenta online de acompanhamento de estudos para a preparação do exame 
 ## Como usar
 
 Você pode acessar a página do GitHub:
-[Deploy GitHub Pages](https://sthefanyricardo.github.io/manage-training-syllabus-rfcp/)
+[Deploy (GitHub Pages)](https://sthefanyricardo.github.io/manage-training-syllabus-rfcp/)
 
 
 ### Acompanhamento do progresso
