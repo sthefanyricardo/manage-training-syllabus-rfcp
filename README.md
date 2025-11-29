@@ -1,6 +1,6 @@
 # Rastreador de Estudos RFCP
 
-> Fork do projeto [grind-rfcp](https://github.com/sklarow/grind-rfcp) de Allan Sklarow. Este fork mantém a Licença MIT. Consulte o arquivo LICENSE na raiz do repositório para os termos completos.
+> Fork do projeto [grind-rfcp](https://github.com/sklarow/grind-rfcp) de [Allan Sklarow](https://www.linkedin.com/in/sklarow/). Este fork mantém a Licença MIT. Consulte o arquivo LICENSE na raiz do repositório para os termos completos.
 
 Uma ferramenta online de acompanhamento de estudos para a preparação do exame Robot Framework® Certified Professional (RFCP®). Este aplicativo ajuda você a monitorar seu progresso em relação aos objetivos de aprendizagem do RFCP, gerenciar seu tempo de estudo e organizar sua jornada de aprendizado.
 
@@ -54,12 +54,3 @@ Você pode acessar a página do GitHub:
 ## Isenção de responsabilidade
 
 Este rastreador de estudos é um projeto independente criado exclusivamente para fins educacionais e de estudo pessoal. Não é afiliado, endossado ou patrocinado pela organização Robot Framework ou seu programa de certificação.
-
-## Créditos
-
-- Criado por [Allan Sklarow](https://www.linkedin.com/in/sklarow/)
-- Desenvolvido para o [Estudo RFCP](https://robotframework.org/robotframework-RFCP-syllabus/docs/learning_objectives)
-
-## Licença
-
-Este projeto está disponível para uso sob a Licença MIT.
