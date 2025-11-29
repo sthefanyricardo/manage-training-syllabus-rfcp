@@ -5,10 +5,22 @@ const loadObjectives = async () => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        const data = await response.json();
-        return data.lessons || [];
+        const text = await response.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (parseError) {
+            const snippet = text.substring(0, 200);
+            console.error('Erro ao parsear JSON:', parseError.message, '\nConteúdo inicial:', snippet);
+            return [];
+        }
+        if (!data || !data.lessons) {
+            console.error('JSON não contém a propriedade "lessons".');
+            return [];
+        }
+        return data.lessons;
     } catch (error) {
-        console.error('Error loading objectives:', error);
+        console.error('Erro ao carregar objetivos:', error);
         return [];
     }
 };
@@ -31,9 +43,10 @@ const updateProgress = (completedIds, totalCount, objectives) => {
     document.getElementById('total-count').textContent = totalCount;
     
     const progressBar = document.getElementById('progress');
-    const progressPercentage = (completedCount / totalCount) * 100;
-    progressBar.style.width = `${progressPercentage}%`;
-    progressBar.textContent = `${Math.round(progressPercentage)}%`;
+    const progressPercentage = totalCount === 0 ? 0 : (completedCount / totalCount) * 100;
+    const roundedPercentage = Math.round(progressPercentage);
+    progressBar.style.width = `${roundedPercentage}%`;
+    progressBar.textContent = `${roundedPercentage}%`;
 
     // Calculate total time from objectives data
     let totalTime = 0;
@@ -47,8 +60,8 @@ const updateProgress = (completedIds, totalCount, objectives) => {
     });
 
     document.querySelector('.preferences p').innerHTML = 
-        `<span id="completed-count">${completedCount}</span> / <span id="total-count">${totalCount}</span> completed · 
-         <span id="completed-time">${completedTime}</span> / <span id="total-time">${totalTime}</span> minutes`;
+        `<span id="completed-count">${completedCount}</span> / <span id="total-count">${totalCount}</span> concluídos · 
+         <span id="completed-time">${completedTime}</span> / <span id="total-time">${totalTime}</span> minutos`;
 };
 
 // Create objective card
@@ -67,10 +80,10 @@ const createObjectiveCard = (objective, isCompleted) => {
         </div>
         <h3 class="objective-name">${objective.name}</h3>
         <div class="objective-actions">
-            <a href="${objective.url}" class="objective-link" target="_blank">View Details</a>
-            <button class="mark-complete-btn">${isCompleted ? 'Completed' : 'Mark as completed'}</button>
+            <a href="${objective.url}" class="objective-link" target="_blank">Ver detalhes</a>
+            <button class="mark-complete-btn">${isCompleted ? 'Concluído' : 'Marcar como concluído'}</button>
         </div>
-        <button class="complete-button" aria-label="Toggle completion">
+        <button class="complete-button" aria-label="Alternar conclusão">
             ✓
         </button>
     `;
@@ -148,7 +161,7 @@ const generateContributionGrid = (completionDates) => {
         }
         
         // Add tooltip data
-        cell.title = `${date.toLocaleDateString()}: ${count} objectives learned!`;
+        cell.title = `${date.toLocaleDateString('pt-BR')}: ${count} objetivos concluídos!`;
         
         gridContainer.appendChild(cell);
     });
@@ -163,6 +176,15 @@ const initApp = async () => {
     const searchInput = document.getElementById('search-input');
     let currentFilter = 'all';
     let currentSearch = '';
+
+    // Handle empty objectives list
+    if (objectives.length === 0) {
+        objectivesList.innerHTML = '<p class="empty-message">Nenhum objetivo carregado. Verifique o arquivo src/data/syllabus_rfcp.json.</p>';
+        // Disable filters and search when no objectives
+        filterButtons.forEach(btn => btn.disabled = true);
+        searchInput.disabled = true;
+        return;
+    }
 
     // Update progress display with objectives data
     updateProgress(completedIds, objectives.length, objectives);
