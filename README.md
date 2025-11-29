@@ -1,64 +1,63 @@
-# RFCP Study Tracker
+# Rastreador de Estudos RFCP
 
-A web-based study tracker for the Robot Framework® Certified Professional (RFCP®) exam preparation. This application helps you track your progress through the RFCP learning objectives, manage your study time, and organize your learning journey.
+Uma ferramenta online de acompanhamento de estudos para a preparação do exame Robot Framework® Certified Professional (RFCP®). Este aplicativo ajuda você a monitorar seu progresso em relação aos objetivos de aprendizagem do RFCP, gerenciar seu tempo de estudo e organizar sua jornada de aprendizado.
 
-## Features
+## Características
 
-- **Progress Tracking**: Visual progress bar and statistics showing completed objectives and study time
-- **Smart Filtering**: Filter objectives by completion status (All/Completed/Unfinished)
-- **Knowledge Level Filters**: Sort objectives by knowledge level (K1/K2/K3)
-- **Search Functionality**: Search through objectives by name or ID
-- **Time Management**: Track estimated study time for each objective
-- **Persistent Storage**: Progress is saved locally in your browser
-- **Direct Links**: Quick access to official RFCP documentation for each objective
+- **Acompanhamento do Progresso**: Barra de progresso visual e estatísticas mostrando os objetivos concluídos e o tempo de estudo.
+- **Filtragem Inteligente**: Filtre os objetivos por status de conclusão (Todos/Concluídos/Incompletos)
+- **Filtros de Nível de Conhecimento**: Classifique os objetivos por nível de conhecimento (K1/K2/K3)
+- **Funcionalidade de Busca**: Busque objetivos por nome ou ID.
+- **Gestão do Tempo**: Acompanhe o tempo estimado de estudo para cada objetivo.
+- **Armazenamento persistente**: O progresso é salvo localmente no seu navegador.
+- **Links Diretos**: Acesso rápido à documentação oficial do RFCP para cada objetivo
 
-## Getting Started
+## Começando
 
-1. Clone this repository or download the files
-2. Open `index.html` in your web browser
-3. Start tracking your RFCP exam preparation!
+1. Clone este repositório ou baixe os arquivos.
+2. Abra o arquivo `index.html` no seu navegador web.
+3. Comece a monitorar sua preparação para o exame RFCP!
 
-## How to Use
+## Como usar
 
-You can just access the github page:
+Você pode acessar a página do GitHub:
 https://sklarow.github.io/grind-rfcp/
 
 
-### Tracking Progress
-- Click on any objective card to mark it as completed/uncompleted
-- Use the progress bar at the top to monitor your overall progress
-- View total completed objectives and estimated study time
+### Acompanhamento do progresso
+- Clique em qualquer cartão de objetivo para marcá-lo como concluído/não concluído.
+- Utilize a barra de progresso na parte superior para monitorar seu progresso geral.
+- Veja o total de objetivos concluídos e o tempo estimado de estudo.
 
-### Filtering and Searching
-- Use the search bar to find specific objectives by name or ID
-- Filter objectives using the buttons:
-  - All: View all objectives
-  - Completed: Show only completed objectives
-  - Unfinished: Show remaining objectives
-  - K1/K2/K3: Filter by knowledge level
+### Filtragem e Busca
+- Utilize a barra de pesquisa para encontrar objetivos específicos por nome ou ID.
+- Filtre os objetivos usando os botões:
+  - Todos: Ver todos os objetivos
+  - Concluído: Mostrar apenas os objetivos concluídos
+  - Incompleto: Mostrar objetivos restantes
+  - K1/K2/K3: Filtrar por nível de conhecimento
 
-### Knowledge Levels
-- **K1 (Remember)**: Basic recall questions
-- **K2 (Understand)**: Understanding concepts and principles
-- **K3 (Apply)**: Practical application of knowledge
+### Níveis de Conhecimento
+- **K1 (Lembrar)**: Perguntas básicas de memorização
+- **K2 (Compreender)**: Compreender conceitos e princípios
+- **K3 (Aplicação)**: Aplicação prática do conhecimento
 
-## Technical Details
+## Detalhes técnicos
 
-- Built with vanilla JavaScript, HTML, and CSS
-- No external dependencies required
-- Uses LocalStorage for progress persistence
-- Responsive design for all devices
+- Construído com JavaScript puro, HTML e CSS.
+- Não requer dependências externas
+- Utiliza o LocalStorage para persistir o progresso.
+- Design responsivo para todos os dispositivos
 
-## Disclaimer
+## Isenção de responsabilidade
 
-This study tracker is an independent project created solely for educational and personal study purposes. It is not affiliated with, endorsed by, or sponsored by the Robot Framework organization or its certification program.
+Este rastreador de estudos é um projeto independente criado exclusivamente para fins educacionais e de estudo pessoal. Não é afiliado, endossado ou patrocinado pela organização Robot Framework ou seu programa de certificação.
 
-## Credits
+## Créditos
 
-- Created by [Allan Sklarow](https://www.linkedin.com/in/sklarow/)
-- Inspired by [Grind75](https://www.techinterviewhandbook.org/grind75/)
-- Built for [RFCP Study](https://robotframework.org/robotframework-RFCP-syllabus/docs/learning_objectives)
+- Criado por [Allan Sklarow](https://www.linkedin.com/in/sklarow/)
+- Desenvolvido para o [Estudo RFCP](https://robotframework.org/robotframework-RFCP-syllabus/docs/learning_objectives)
 
-## License
+## Licença
 
-This project is available for use under the MIT License.
+Este projeto está disponível para uso sob a Licença MIT.
