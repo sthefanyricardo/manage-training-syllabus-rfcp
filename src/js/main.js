@@ -1,7 +1,7 @@
 // Load RFCP data
 const loadObjectives = async () => {
     try {
-        const response = await fetch('../data/syllabus_rfcp.json');
+        const response = await fetch('src/data/syllabus_rfcp.json');
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
