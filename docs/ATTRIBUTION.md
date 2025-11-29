@@ -14,4 +14,4 @@ Este projeto é um fork do repositório [grind-rfcp](https://github.com/sklarow/
 
 ## Licença
 
-Este projeto está licenciado sob a Licença MIT. Consulte o arquivo [LICENSE](../LICENSE) na raiz do repositório para os termos completos.
+Este projeto está licenciado sob a Licença MIT. Consulte o arquivo [LICENSE](/LICENSE) na raiz do repositório para os termos completos.
