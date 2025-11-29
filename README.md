@@ -21,7 +21,7 @@ Uma ferramenta online de acompanhamento de estudos para a preparação do exame 
 ## Como usar
 
 Você pode acessar a página do GitHub:
-https://sklarow.github.io/grind-rfcp/
+[Deploy GitHub Pages](https://sthefanyricardo.github.io/manage-training-syllabus-rfcp/)
 
 
 ### Acompanhamento do progresso
