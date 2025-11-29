@@ -14,7 +14,7 @@ const getRandomDate = () => {
 const simulateActivity = async () => {
     try {
         // Load objectives
-        const response = await fetch('./rfcp.json');
+        const response = await fetch('../data/syllabus_rfcp.json');
         const data = await response.json();
         const objectives = data.lessons;
 
