@@ -1,8 +1,6 @@
 #Pasta
 .vscode/
-.vscode
 vscode/
-vscode
 
 # Arquivo
 .github/*.md
