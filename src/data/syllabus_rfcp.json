@@ -1,8 +1,8 @@
 {
-    "nome": "Objetivos de Aprendizagem Profissional Certificados do Robot Framework®"
-    "website": "https://robotframework.org/robotframework-RFCP-syllabus/docs/learning_objectives"
-    Descrição: "Este JSON contém os objetivos de aprendizagem do programa do RFCP, cada um com um nível de conhecimento associado e tempo estimado de estudo. Para simplificar, assumimos 5 minutos para cada K1, 15 minutos para cada K2 e 20 minutos para cada K3."
-    "lições": [
+    "name": "Objetivos de Aprendizagem Profissional Certificados do Robot Framework®",
+    "website": "https://robotframework.org/robotframework-RFCP-syllabus/docs/learning_objectives",
+    "Description": "Este JSON contém os objetivos de aprendizagem do programa do RFCP, cada um com um nível de conhecimento associado e tempo estimado de estudo. Para simplificar, assumimos 5 minutos para cada K1, 15 minutos para cada K2 e 20 minutos para cada K3.",
+    "lessons": [
       {
         "id": "LO-1.1",
         "tipo": "K1",
