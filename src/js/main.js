@@ -1,6 +1,11 @@
 // Load RFCP data (mais robusto: lê como texto e faz JSON.parse com try/catch)
 let loadError = false;
 
+// Constants
+const MAX_LOG_CHARS = 1000;
+const DEMO_MIN_COMPLETION_RATE = 0.5;
+const DEMO_COMPLETION_RANGE = 0.3;
+
 const loadObjectives = async () => {
     try {
         const response = await fetch('src/data/syllabus_rfcp.json');
@@ -19,7 +24,7 @@ const loadObjectives = async () => {
             return data.lessons || [];
         } catch (parseErr) {
             console.error('Erro ao parsear src/data/syllabus_rfcp.json:', parseErr);
-            console.error('Conteúdo parcial do arquivo (primeiros 1000 chars):', text.slice(0, 1000));
+            console.error('Conteúdo parcial do arquivo (primeiros ' + MAX_LOG_CHARS + ' chars):', text.slice(0, MAX_LOG_CHARS));
             loadError = true;
             return [];
         }
@@ -458,7 +463,7 @@ const populateDemo = (objectives, onUpdate) => {
         const completionDates = {};
         
         // Randomly complete 50-80% of objectives
-        const totalToComplete = Math.floor(objectives.length * (0.5 + Math.random() * 0.3));
+        const totalToComplete = Math.floor(objectives.length * (DEMO_MIN_COMPLETION_RATE + Math.random() * DEMO_COMPLETION_RANGE));
         const shuffled = [...objectives].sort(() => 0.5 - Math.random());
         const selectedObjectives = shuffled.slice(0, totalToComplete);
 
