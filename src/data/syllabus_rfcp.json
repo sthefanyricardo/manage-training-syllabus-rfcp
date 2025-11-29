@@ -5,948 +5,948 @@
     "lessons": [
       {
         "id": "LO-1.1",
-        "tipo": "K1",
-        "nome": "Relembre os dois principais casos de uso do Robot Framework",
+        "type": "K1",
+        "name": "Relembre os dois principais casos de uso do Robot Framework",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-01/purpose",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-1.1.1",
-        "tipo": "K1",
-        "nome": "Relembre os níveis de teste para os quais o Robot Framework é mais utilizado",
+        "type": "K1",
+        "name": "Relembre os níveis de teste para os quais o Robot Framework é mais utilizado",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-01/purpose#111-test-automation",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-1.2.1",
-        "tipo": "K1",
-        "nome": "Relembrar as camadas da Arquitetura Genérica de Automação de Testes (gTAA) e seus componentes correspondentes no Robot Framework"
+        "type": "K1",
+        "name": "Relembrar as camadas da Arquitetura Genérica de Automação de Testes (gTAA) e seus componentes correspondentes no Robot Framework"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-01/architecture#121-robot-framework-and-the-gtaa-generic-test-automation-architecture",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-1.2.2",
-        "tipo": "K1",
-        "nome": "Relembre o que faz parte do Robot Framework e o que não faz",
+        "type": "K1",
+        "name": "Relembre o que faz parte do Robot Framework e o que não faz",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-01/architecture#122-what-is-robot-framework--what-it-is-not",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-1.2.3",
-        "tipo": "K1",
-        "nome": "Relembre a tecnologia na qual o Robot Framework é baseado e os pré-requisitos para executá-lo",
+        "type": "K1",
+        "name": "Relembre a tecnologia na qual o Robot Framework é baseado e os pré-requisitos para executá-lo",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-01/architecture#123-technology--prerequisites",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-1.3",
-        "tipo": "K1",
-        "nome": "Relembre os principais atributos da sintaxe que tornam o Robot Framework simples e legível para humanos",
+        "type": "K1",
+        "name": "Relembre os principais atributos da sintaxe que tornam o Robot Framework simples e legível para humanos",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-01/syntax",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-1.3.3",
-        "tipo": "K2",
-        "nome": "Explique a diferença entre palavras-chave do usuário e palavras-chave da biblioteca"
+        "type": "K2",
+        "name": "Explique a diferença entre palavras-chave do usuário e palavras-chave da biblioteca"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-01/syntax#133-what-are-keywords",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-1.3.4",
-        "tipo": "K1",
-        "nome": "Relembre a diferença entre Arquivos de Recursos e Bibliotecas e seus artefatos",
+        "type": "K1",
+        "name": "Relembre a diferença entre Arquivos de Recursos e Bibliotecas e seus artefatos",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-01/syntax#134-resource-files--libraries",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-1.4",
-        "tipo": "K1",
-        "nome": "Relembre os três estilos de especificação do Robot Framework",
+        "type": "K1",
+        "name": "Relembre os três estilos de especificação do Robot Framework",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-01/styles",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-1.4.1",
-        "tipo": "K2",
-        "nome": "Compreender os conceitos básicos da especificação orientada por palavras-chave"
+        "type": "K2",
+        "name": "Compreender os conceitos básicos da especificação orientada por palavras-chave"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-01/styles#141-keyword-driven-specification",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-1.4.2",
-        "tipo": "K2",
-        "nome": "Compreender os conceitos básicos da Especificação Orientada a Comportamento"
+        "type": "K2",
+        "name": "Compreender os conceitos básicos da Especificação Orientada a Comportamento"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-01/styles#142-behavior-driven-specification",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-1.4.3",
-        "tipo": "K1",
-        "nome": "Relembrar as diferenças entre especificação orientada por palavras-chave e especificação orientada por comportamento"
+        "type": "K1",
+        "name": "Relembrar as diferenças entre especificação orientada por palavras-chave e especificação orientada por comportamento"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-01/styles#143-comparing-keyword-driven-and-behavior-driven-specification",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-1.4.4",
-        "tipo": "K1",
-        "nome": "Relembrar o propósito da Especificação Orientada a Dados",
+        "type": "K1",
+        "name": "Relembrar o propósito da Especificação Orientada a Dados",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-01/styles#144-data-driven-specification",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-1.5.1",
-        "tipo": "K1",
-        "nome": "Relembre o tipo de licença de código aberto sob a qual o Robot Framework é distribuído",
+        "type": "K1",
+        "name": "Relembre o tipo de licença de código aberto sob a qual o Robot Framework é distribuído",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-01/organization#151-open-source-license",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-1.5.2",
-        "tipo": "K1",
-        "nome": "Liste e relembre os principais objetivos e a forma organizacional da Robot Framework Foundation"
+        "type": "K1",
+        "name": "Liste e relembre os principais objetivos e a forma organizacional da Robot Framework Foundation"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-01/organization#152-about-the-robot-framework-foundation",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-1.5.3",
-        "tipo": "K1",
-        "nome": "Relembrar as páginas oficiais do Robot Framework e seus recursos"
+        "type": "K1",
+        "name": "Relembrar as páginas oficiais do Robot Framework e seus recursos"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-01/organization#153-robot-framework-webpages",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-2.1",
-        "tipo": "K2",
-        "nome": "Entenda quais arquivos e diretórios são considerados suítes e como eles são estruturados em uma árvore de suítes."
+        "type": "K2",
+        "name": "Entenda quais arquivos e diretórios são considerados suítes e como eles são estruturados em uma árvore de suítes."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/suitefile",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.1.1",
-        "tipo": "K1",
-        "nome": "Relembre as condições e os requisitos para que um arquivo seja considerado um arquivo do Suite",
+        "type": "K1",
+        "name": "Relembre as condições e os requisitos para que um arquivo seja considerado um arquivo do Suite",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/suitefile#211-suite-files",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-2.1.2",
-        "tipo": "K1",
-        "nome": "Relembre as seções disponíveis em um arquivo de suíte e sua finalidade."
+        "type": "K1",
+        "name": "Relembre as seções disponíveis em um arquivo de suíte e sua finalidade."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/suitefile#212-sections-and-their-artifacts",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-2.1.2.1-1",
-        "tipo": "K1",
-        "nome": "Recupere as configurações disponíveis em um arquivo de suíte."
+        "type": "K1",
+        "name": "Recupere as configurações disponíveis em um arquivo de suíte."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/suitefile#2121-introduction-in--settings--section",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-2.1.2.1-2",
-        "tipo": "K2",
-        "nome": "Compreender os conceitos de configurações de suíte e como defini-las."
+        "type": "K2",
+        "name": "Compreender os conceitos de configurações de suíte e como defini-las."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/suitefile#2121-introduction-in--settings--section",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.1.2.2",
-        "tipo": "K1",
-        "nome": "Relembre a finalidade da seção *** Variáveis ​​***."
+        "type": "K1",
+        "name": "Relembre a finalidade da seção *** Variáveis ​​***."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/suitefile#2122-introduction-in--variables--section",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-2.1.2.3",
-        "tipo": "K2",
-        "nome": "Entenda a finalidade da seção *** Casos de Teste *** ou *** Tarefas ***."
+        "type": "K2",
+        "name": "Entenda a finalidade da seção *** Casos de Teste *** ou *** Tarefas ***."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/suitefile#2123-introduction-in--test-cases--or--tasks--section",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.1.2.4",
-        "tipo": "K2",
-        "nome": "Entenda o propósito e as limitações da seção *** Palavras-chave ***."
+        "type": "K2",
+        "name": "Entenda o propósito e as limitações da seção *** Palavras-chave ***."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/suitefile#2124-introduction-in--keywords--section",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.2",
-        "tipo": "K2",
-        "nome": "Compreender a sintaxe básica de casos de teste e tarefas."
+        "type": "K2",
+        "name": "Compreender a sintaxe básica de casos de teste e tarefas."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/suitefile_syntax",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.2.1",
-        "tipo": "K3",
-        "nome": "Compreender e aplicar a mecânica de indentação e separação no Robot Framework."
+        "type": "K3",
+        "name": "Compreender e aplicar a mecânica de indentação e separação no Robot Framework."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/suitefile_syntax#221-separation-and-indentation",
-        "hora_minuto": 20
+        "time_min": 20
       },
       {
         "id": "LO-2.2.2",
-        "tipo": "K3",
-        "nome": "Ser capaz de usar quebras de linha e continuação em uma frase."
+        "type": "K3",
+        "name": "Ser capaz de usar quebras de linha e continuação em uma frase."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/suitefile_syntax#222-line-breaks-continuation-and-empty-lines",
-        "hora_minuto": 20
+        "time_min": 20
       },
       {
         "id": "LO-2.2.3",
-        "tipo": "K3",
-        "nome": "Ser capaz de adicionar comentários em linha às suítes."
+        "type": "K3",
+        "name": "Ser capaz de adicionar comentários em linha às suítes."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/suitefile_syntax#223-in-line-comments",
-        "hora_minuto": 20
+        "time_min": 20
       },
       {
         "id": "LO-2.2.4",
-        "tipo": "K2",
-        "nome": "Entenda como escapar de caracteres de controle no Robot Framework."
+        "type": "K2",
+        "name": "Entenda como escapar de caracteres de controle no Robot Framework."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/suitefile_syntax#224-escaping-of-control-characters",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.2.5",
-        "tipo": "K2",
-        "nome": "Entender a estrutura de um arquivo de suíte básico."
+        "type": "K2",
+        "name": "Entender a estrutura de um arquivo de suíte básico."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/suitefile_syntax#225-example-suite-file",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.3",
-        "tipo": "K1",
-        "nome": "Relembre os três componentes da CLI do Robot Framework."
+        "type": "K1",
+        "name": "Relembre os três componentes da CLI do Robot Framework."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/executing",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-2.3.1",
-        "tipo": "K2",
-        "nome": "Entender como executar o comando do robô e seu uso básico."
+        "type": "K2",
+        "name": "Entender como executar o comando do robô e seu uso básico."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/executing#231-robot-command--help",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.3.2",
-        "tipo": "K2",
-        "nome": "Explique os artefatos de execução gerados pelo Robot Framework."
+        "type": "K2",
+        "name": "Explique os artefatos de execução gerados pelo Robot Framework."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/executing#232-execution-artifacts",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.3.3",
-        "tipo": "K1",
-        "nome": "Relembre os quatro rótulos de status diferentes usados ​​pelo Robot Framework."
+        "type": "K1",
+        "name": "Relembre os quatro rótulos de status diferentes usados ​​pelo Robot Framework."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/executing#233-status",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-2.3.3.1",
-        "tipo": "K2",
-        "nome": "Entenda quando um elemento é marcado como PASS."
+        "type": "K2",
+        "name": "Entenda quando um elemento é marcado como PASS."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/executing#2331-pass",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.3.3.2",
-        "tipo": "K2",
-        "nome": "Entenda quando um elemento é marcado como FALHA."
+        "type": "K2",
+        "name": "Entenda quando um elemento é marcado como FALHA."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/executing#2332-fail",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.3.4",
-        "tipo": "K2",
-        "nome": "Entenda a diferença entre mensagens de log e saída do console."
+        "type": "K2",
+        "name": "Entenda a diferença entre mensagens de log e saída do console."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/executing#234-logging-possibilities-log-vs-console",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.4.1-1",
-        "tipo": "K1",
-        "nome": "Relembre a finalidade das bibliotecas de palavras-chave e como importá-las."
+        "type": "K1",
+        "name": "Relembre a finalidade das bibliotecas de palavras-chave e como importá-las."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_imports#241-libraries",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-2.4.1-2",
-        "tipo": "K1",
-        "nome": "Relembre os três tipos de bibliotecas no Robot Framework."
+        "type": "K1",
+        "name": "Relembre os três tipos de bibliotecas no Robot Framework."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_imports#241-libraries",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-2.4.2-1",
-        "tipo": "K1",
-        "nome": "Relembre a finalidade dos arquivos de recursos."
+        "type": "K1",
+        "name": "Relembre a finalidade dos arquivos de recursos."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_imports#242-resource-files",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-2.4.2-2",
-        "tipo": "K3",
-        "nome": "Use arquivos de recursos para importar novas palavras-chave."
+        "type": "K3",
+        "name": "Use arquivos de recursos para importar novas palavras-chave."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_imports#242-resource-files",
-        "hora_minuto": 20
+        "time_min": 20
       },
       {
         "id": "LO-2.4.3",
-        "tipo": "K2",
-        "nome": "Entender os diferentes tipos de caminhos que podem ser usados ​​para importar bibliotecas e arquivos de recursos."
+        "type": "K2",
+        "name": "Entender os diferentes tipos de caminhos que podem ser usados ​​para importar bibliotecas e arquivos de recursos."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_imports#243-import-paths",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.5",
-        "tipo": "K2",
-        "nome": "Entender a estrutura das interfaces de palavras-chave e como interpretar a documentação de palavras-chave."
+        "type": "K2",
+        "name": "Entender a estrutura das interfaces de palavras-chave e como interpretar a documentação de palavras-chave."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_interface",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.5.1",
-        "tipo": "K1",
-        "nome": "Relembre as informações que podem ser encontradas na documentação por palavra-chave."
+        "type": "K1",
+        "name": "Relembre as informações que podem ser encontradas na documentação por palavra-chave."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_interface#251-documented-keyword-information",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-2.5.2",
-        "tipo": "K2",
-        "nome": "Entenda a diferença entre os tipos de argumento."
+        "type": "K2",
+        "name": "Entenda a diferença entre os tipos de argumento."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_interface#252-keyword-arguments",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.5.2.1",
-        "tipo": "K2",
-        "nome": "Compreender o conceito de argumentos obrigatórios e como eles são documentados."
+        "type": "K2",
+        "name": "Compreender o conceito de argumentos obrigatórios e como eles são documentados."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_interface#2521-mandatory-arguments",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.5.2.2",
-        "tipo": "K2",
-        "nome": "Entender o conceito de argumentos opcionais e como eles são documentados."
+        "type": "K2",
+        "name": "Entender o conceito de argumentos opcionais e como eles são documentados."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_interface#2522-optional-arguments",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.5.2.3",
-        "tipo": "K1",
-        "nome": "Relembre o conceito de palavras-chave com argumentos embutidos usados ​​na Especificação Orientada a Comportamento e como elas são documentadas."
+        "type": "K1",
+        "name": "Relembre o conceito de palavras-chave com argumentos embutidos usados ​​na Especificação Orientada a Comportamento e como elas são documentadas."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_interface#2523-embedded-arguments",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-2.5.2.4",
-        "tipo": "K1",
-        "nome": "Relembre como os "Argumentos Posicionais ou Nomeados" são marcados na documentação e seu caso de uso."
+        "type": "K1",
+        "name": "Relembre como os "Argumentos Posicionais ou Nomeados" são marcados na documentação e seu caso de uso."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_interface#2524-positional-or-named-arguments",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-2.5.2.5",
-        "tipo": "K1",
-        "nome": "Relembre como o 'Número Variável de Argumentos Posicionais' é marcado na documentação e seu caso de uso."
+        "type": "K1",
+        "name": "Relembre como o 'Número Variável de Argumentos Posicionais' é marcado na documentação e seu caso de uso."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_interface#2525-variable-number-of-positional-arguments",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-2.5.2.6",
-        "tipo": "K1",
-        "nome": "Relembre quais propriedades os "Argumentos Somente Nomeados" possuem e como elas são documentadas."
+        "type": "K1",
+        "name": "Relembre quais propriedades os "Argumentos Somente Nomeados" possuem e como elas são documentadas."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_interface#2526-named-only-arguments",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-2.5.2.7",
-        "tipo": "K1",
-        "nome": "Lembre-se de como os argumentos nomeados livres são marcados na documentação."
+        "type": "K1",
+        "name": "Lembre-se de como os argumentos nomeados livres são marcados na documentação."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_interface#2527-free-named-arguments",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-2.5.2.8",
-        "tipo": "K2",
-        "nome": "Compreender o conceito de tipos de argumentos e conversão automática de tipos."
+        "type": "K2",
+        "name": "Compreender o conceito de tipos de argumentos e conversão automática de tipos."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_interface#2528-argument-types",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.5.2.9",
-        "tipo": "K2",
-        "nome": "Entenda o conceito de dicas de tipo de retorno."
+        "type": "K2",
+        "name": "Entenda o conceito de dicas de tipo de retorno."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_interface#2529-return-types",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.5.3",
-        "tipo": "K2",
-        "nome": "Entender como ler a documentação de palavras-chave e como interpretar os exemplos."
+        "type": "K2",
+        "name": "Entender como ler a documentação de palavras-chave e como interpretar os exemplos."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/keyword_interface#253-keyword-documentation--examples",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.6",
-        "tipo": "K2",
-        "nome": "Entenda como chamar palavras-chave importadas e como estruturar chamadas de palavras-chave."
+        "type": "K2",
+        "name": "Entenda como chamar palavras-chave importadas e como estruturar chamadas de palavras-chave."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/writing_test",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.6.1",
-        "tipo": "K2",
-        "nome": "Entender o conceito de como definir valores de argumentos posicionalmente."
+        "type": "K2",
+        "name": "Entender o conceito de como definir valores de argumentos posicionalmente."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/writing_test#261-positional-arguments",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.6.2",
-        "tipo": "K2",
-        "nome": "Entenda o conceito de argumentos nomeados e como definir valores de argumentos por seus nomes."
+        "type": "K2",
+        "name": "Entenda o conceito de argumentos nomeados e como definir valores de argumentos por seus nomes."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/writing_test#262-named-arguments",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-2.6.3",
-        "tipo": "K1",
-        "nome": "Lembre-se de como usar argumentos embutidos."
+        "type": "K1",
+        "name": "Lembre-se de como usar argumentos embutidos."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-02/writing_test#263-embedded-arguments--using-behavior-driven-specification",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-3.2-1",
-        "tipo": "K2",
-        "nome": "Entender como as variáveis ​​no Robot Framework são usadas para armazenar e gerenciar dados"
+        "type": "K2",
+        "name": "Entender como as variáveis ​​no Robot Framework são usadas para armazenar e gerenciar dados"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/variables",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-3.2-2",
-        "tipo": "K1",
-        "nome": "Relembre as cinco maneiras diferentes e relevantes de criar e atribuir variáveis",
+        "type": "K1",
+        "name": "Relembre as cinco maneiras diferentes e relevantes de criar e atribuir variáveis",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/variables",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-3.2.1-1",
-        "tipo": "K1",
-        "nome": "Relembre os quatro tipos de acesso sintático às variáveis ​​com seus prefixos",
+        "type": "K1",
+        "name": "Relembre os quatro tipos de acesso sintático às variáveis ​​com seus prefixos",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/variables#321-variable-syntax-and-access-types",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-3.2.1-2",
-        "tipo": "K1",
-        "nome": "Relembre a sintaxe básica das variáveis",
+        "type": "K1",
+        "name": "Relembre a sintaxe básica das variáveis",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/variables#321-variable-syntax-and-access-types",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-3.2.2-1",
-        "tipo": "K3",
-        "nome": "Criar variáveis ​​na seção Variáveis"
+        "type": "K3",
+        "name": "Criar variáveis ​​na seção Variáveis"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/variables#322--variables--section",
-        "hora_minuto": 20
+        "time_min": 20
       },
       {
         "id": "LO-3.2.2-2",
-        "tipo": "K3",
-        "nome": "Use os prefixos de variáveis ​​corretos para atribuir e acessar variáveis",
+        "type": "K3",
+        "name": "Use os prefixos de variáveis ​​corretos para atribuir e acessar variáveis",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/variables#322--variables--section",
-        "hora_minuto": 20
+        "time_min": 20
       },
       {
         "id": "LO-3.2.2.1-1",
-        "tipo": "K3",
-        "nome": "Criar e atribuir variáveis ​​escalares",
+        "type": "K3",
+        "name": "Criar e atribuir variáveis ​​escalares",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/variables#3221-scalar-variable-definition",
-        "hora_minuto": 20
+        "time_min": 20
       },
       {
         "id": "LO-3.2.2.1-2",
-        "tipo": "K2",
-        "nome": "Entender como várias linhas podem ser usadas para definir variáveis ​​escalares"
+        "type": "K2",
+        "name": "Entender como várias linhas podem ser usadas para definir variáveis ​​escalares"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/variables#3221-scalar-variable-definition",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-3.2.2.2",
-        "tipo": "K2",
-        "nome": "Entender como acessar tipos de dados primitivos"
+        "type": "K2",
+        "name": "Entender como acessar tipos de dados primitivos"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/variables#3222-primitive-data-types",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-3.2.2.3",
-        "tipo": "K2",
-        "nome": "Entender como definir e acessar dados em variáveis ​​de lista",
+        "type": "K2",
+        "name": "Entender como definir e acessar dados em variáveis ​​de lista",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/variables#3223-list-variable-definition",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-3.2.2.4",
-        "tipo": "K2",
-        "nome": "Entender como definir e acessar dados em variáveis ​​de dicionário"
+        "type": "K2",
+        "name": "Entender como definir e acessar dados em variáveis ​​de dicionário"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/variables#3224-dictionary-variable-definition",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-3.2.3",
-        "tipo": "K3",
-        "nome": "Ser capaz de atribuir valores de retorno de palavras-chave a variáveis",
+        "type": "K3",
+        "name": "Ser capaz de atribuir valores de retorno de palavras-chave a variáveis",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/variables#323-return-values-from-keywords",
-        "hora_minuto": 20
+        "time_min": 20
       },
       {
         "id": "LO-3.2.4",
-        "tipo": "K2",
-        "nome": "Entenda como criar variáveis ​​usando a instrução VAR",
+        "type": "K2",
+        "name": "Entenda como criar variáveis ​​usando a instrução VAR",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/variables#324-var-statement",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-3.2.5",
-        "tipo": "K2",
-        "nome": "Entender como as variáveis ​​de escopo local e de suíte são criadas",
+        "type": "K2",
+        "name": "Entender como as variáveis ​​de escopo local e de suíte são criadas",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/variables#325-variable-scope-introduction",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-3.3.2",
-        "tipo": "K1",
-        "nome": "Lembre-se das regras de correspondência de nomes de palavras-chave."
+        "type": "K1",
+        "name": "Lembre-se das regras de correspondência de nomes de palavras-chave."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/user_keyword#332-user-keyword-names",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-3.3.3",
-        "tipo": "K1",
-        "nome": "Recupere todas as configurações disponíveis e sua finalidade para Palavras-chave do Usuário"
+        "type": "K1",
+        "name": "Recupere todas as configurações disponíveis e sua finalidade para Palavras-chave do Usuário"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/user_keyword#333-user-keyword-settings",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-3.3.4",
-        "tipo": "K1",
-        "nome": "Lembre-se da importância da primeira linha lógica e da documentação de palavras-chave para o arquivo de log."
+        "type": "K1",
+        "name": "Lembre-se da importância da primeira linha lógica e da documentação de palavras-chave para o arquivo de log."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/user_keyword#334-user-keyword-documentation",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-3.3.5",
-        "tipo": "K2",
-        "nome": "Entenda a finalidade e a sintaxe da configuração [Argumentos] em Palavras-chave do Usuário."
+        "type": "K2",
+        "name": "Entenda a finalidade e a sintaxe da configuração [Argumentos] em Palavras-chave do Usuário."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/user_keyword#335-user-keyword-arguments",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-3.3.5.1-1",
-        "tipo": "K1",
-        "nome": "Lembre-se do que torna um argumento obrigatório em uma palavra-chave do usuário."
+        "type": "K1",
+        "name": "Lembre-se do que torna um argumento obrigatório em uma palavra-chave do usuário."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/user_keyword#3351-defining-mandatory-arguments",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-3.3.5.1-2",
-        "tipo": "K3",
-        "nome": "Definir palavras-chave do usuário com argumentos obrigatórios."
+        "type": "K3",
+        "name": "Definir palavras-chave do usuário com argumentos obrigatórios."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/user_keyword#3351-defining-mandatory-arguments",
-        "hora_minuto": 20
+        "time_min": 20
       },
       {
         "id": "LO-3.3.5.2-1",
-        "tipo": "K1",
-        "nome": "Lembre-se de como definir argumentos opcionais em uma palavra-chave do usuário."
+        "type": "K1",
+        "name": "Lembre-se de como definir argumentos opcionais em uma palavra-chave do usuário."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/user_keyword#3352-defining-optional-arguments",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-3.3.5.2-2",
-        "tipo": "K3",
-        "nome": "Definir palavras-chave do usuário com argumentos opcionais."
+        "type": "K3",
+        "name": "Definir palavras-chave do usuário com argumentos opcionais."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/user_keyword#3352-defining-optional-arguments",
-        "hora_minuto": 20
+        "time_min": 20
       },
       {
         "id": "LO-3.3.5.3-1",
-        "tipo": "K2",
-        "nome": "Descreva como os argumentos embutidos são substituídos por valores reais durante a execução da palavra-chave."
+        "type": "K2",
+        "name": "Descreva como os argumentos embutidos são substituídos por valores reais durante a execução da palavra-chave."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/user_keyword#3353-defining-embedded-arguments",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-3.3.5.3-2",
-        "tipo": "K2",
-        "nome": "Entenda o papel dos argumentos embutidos no estilo de Desenvolvimento Orientado a Comportamento (BDD)."
+        "type": "K2",
+        "name": "Entenda o papel dos argumentos embutidos no estilo de Desenvolvimento Orientado a Comportamento (BDD)."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/user_keyword#3353-defining-embedded-arguments",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-3.3.6-1",
-        "tipo": "K2",
-        "nome": "Entenda como a instrução RETURN passa dados entre diferentes palavras-chave."
+        "type": "K2",
+        "name": "Entenda como a instrução RETURN passa dados entre diferentes palavras-chave."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/user_keyword#336-return-statement",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-3.3.6-2",
-        "tipo": "K3",
+        "type": "K3",
         "name": "Use a instrução RETURN para retornar valores de uma palavra-chave do usuário e atribuí-los a uma variável."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/user_keyword#336-return-statement",
-        "hora_minuto": 20
+        "time_min": 20
       },
       {
         "id": "LO-3.3.7",
-        "tipo": "K1",
-        "nome": "Lembre-se das convenções de nomenclatura para palavras-chave do usuário."
+        "type": "K1",
+        "name": "Lembre-se das convenções de nomenclatura para palavras-chave do usuário."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/user_keyword#337-keyword-conventions",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-3.4",
-        "tipo": "K2",
-        "nome": "Compreender o conceito básico e a sintaxe da Especificação Orientada a Dados"
+        "type": "K2",
+        "name": "Compreender o conceito básico e a sintaxe da Especificação Orientada a Dados"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/datadriven",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-3.4.1-1",
-        "tipo": "K2",
-        "nome": "Entenda como definir e usar modelos de teste/tarefa",
+        "type": "K2",
+        "name": "Entenda como definir e usar modelos de teste/tarefa",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/datadriven#341-testtask-templates",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-3.4.1-2",
-        "tipo": "K1",
-        "nome": "Relembre as diferenças entre as duas abordagens distintas para definir a Especificação Orientada a Dados",
+        "type": "K1",
+        "name": "Relembre as diferenças entre as duas abordagens distintas para definir a Especificação Orientada a Dados",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/datadriven#341-testtask-templates",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-3.4.1.1",
-        "tipo": "K1",
-        "nome": "Relembrar a sintaxe e as propriedades de vários testes/tarefas nomeados com um único modelo",
+        "type": "K1",
+        "name": "Relembrar a sintaxe e as propriedades de vários testes/tarefas nomeados com um único modelo",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/datadriven#3411-multiple-named-testtask-with-one-template",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-3.4.1.2",
-        "tipo": "K1",
-        "nome": "Relembrar a sintaxe e as propriedades de testes|tarefas nomeados com múltiplas linhas de dados",
+        "type": "K1",
+        "name": "Relembrar a sintaxe e as propriedades de testes|tarefas nomeados com múltiplas linhas de dados",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/datadriven#3412-named-testtask-with-multiple-data-rows",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-3.5",
-        "tipo": "K1",
-        "nome": "Lembre-se de que conflitos de nomenclatura podem surgir da importação de múltiplos arquivos de recursos."
+        "type": "K1",
+        "name": "Lembre-se de que conflitos de nomenclatura podem surgir da importação de múltiplos arquivos de recursos."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/advanced_importing",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-3.5.1",
-        "tipo": "K2",
-        "nome": "Entender como funcionam as importações transitivas de arquivos de recursos e bibliotecas."
+        "type": "K2",
+        "name": "Entender como funcionam as importações transitivas de arquivos de recursos e bibliotecas."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/advanced_importing#351-importing-hierarchies",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-3.5.2",
-        "tipo": "K3",
-        "nome": "Ser capaz de configurar a importação de uma biblioteca usando argumentos."
+        "type": "K3",
+        "name": "Ser capaz de configurar a importação de uma biblioteca usando argumentos."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/advanced_importing#352-library-configuration",
-        "hora_minuto": 20
+        "time_min": 20
       },
       {
         "id": "LO-3.5.3",
-        "tipo": "K2",
-        "nome": "Explique como os conflitos de nomenclatura podem ocorrer e como mitigá-los."
+        "type": "K2",
+        "name": "Explique como os conflitos de nomenclatura podem ocorrer e como mitigá-los."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-03/advanced_importing#353-naming-conflicts",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-4.1-1",
-        "tipo": "K1",
-        "nome": "Relembrar o propósito e os benefícios das Configurações no Robot Framework"
+        "type": "K1",
+        "name": "Relembrar o propósito e os benefícios das Configurações no Robot Framework"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/setups",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-4.1-2",
-        "tipo": "K1",
-        "nome": "Relembre os diferentes níveis em que uma configuração pode ser definida",
+        "type": "K1",
+        "name": "Relembre os diferentes níveis em que uma configuração pode ser definida",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/setups",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-4.1.1-1",
-        "tipo": "K1",
-        "nome": "Relembrar as principais características, benefícios e sintaxe da Configuração do Pacote"
+        "type": "K1",
+        "name": "Relembrar as principais características, benefícios e sintaxe da Configuração do Pacote"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/setups#411-suite-setup",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-4.1.1-2",
-        "tipo": "K2",
-        "nome": "Entender quando a Configuração do Pacote é executada e usada",
+        "type": "K2",
+        "name": "Entender quando a Configuração do Pacote é executada e usada",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/setups#411-suite-setup",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-4.1.2-1",
-        "tipo": "K1",
-        "nome": "Relembrar as principais características, benefícios e sintaxe da Configuração de Teste"
+        "type": "K1",
+        "name": "Relembrar as principais características, benefícios e sintaxe da Configuração de Teste"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/setups#412-testtask-setup",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-4.1.2-2",
-        "tipo": "K2",
-        "nome": "Entender quando a Configuração de Teste|Tarefa é executada e usada",
+        "type": "K2",
+        "name": "Entender quando a Configuração de Teste|Tarefa é executada e usada",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/setups#412-testtask-setup",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-4.1.3",
-        "tipo": "K1",
-        "nome": "Relembrar as principais características e sintaxe da Configuração de Palavras-chave"
+        "type": "K1",
+        "name": "Relembrar as principais características e sintaxe da Configuração de Palavras-chave"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/setups#413-keyword-setup",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-4.2-1",
-        "tipo": "K2",
-        "nome": "Compreender os diferentes níveis onde e como os desmantelamentos podem ser definidos e quando são executados",
+        "type": "K2",
+        "name": "Compreender os diferentes níveis onde e como os desmantelamentos podem ser definidos e quando são executados",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/teardowns",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-4.2-2",
-        "tipo": "K1",
-        "nome": "Relembre os casos de uso típicos para o uso de Desmontagens",
+        "type": "K1",
+        "name": "Relembre os casos de uso típicos para o uso de Desmontagens",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/teardowns",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-4.2.1-1",
-        "tipo": "K1",
-        "nome": "Relembrar as principais características, benefícios e sintaxe do Suite Teardown"
+        "type": "K1",
+        "name": "Relembrar as principais características, benefícios e sintaxe do Suite Teardown"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/teardowns#421-suite-teardown",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-4.2.1-2",
-        "tipo": "K2",
-        "nome": "Entender quando o Suite Teardown é executado e usado",
+        "type": "K2",
+        "name": "Entender quando o Suite Teardown é executado e usado",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/teardowns#421-suite-teardown",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-4.2.2-1",
-        "tipo": "K1",
-        "nome": "Relembrar as principais características, benefícios e sintaxe do Test|Task Teardown"
+        "type": "K1",
+        "name": "Relembrar as principais características, benefícios e sintaxe do Test|Task Teardown"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/teardowns#422-testtask-teardown",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-4.2.2-2",
-        "tipo": "K2",
-        "nome": "Entender quando o Test|Task Teardown é executado e usado",
+        "type": "K2",
+        "name": "Entender quando o Test|Task Teardown é executado e usado",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/teardowns#422-testtask-teardown",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-4.2.3",
-        "tipo": "K1",
-        "nome": "Relembrar as principais características, benefícios e sintaxe do Keyword Teardown"
+        "type": "K1",
+        "name": "Relembrar as principais características, benefícios e sintaxe do Keyword Teardown"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/teardowns#423-keyword-teardown",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-4.3",
-        "tipo": "K1",
-        "nome": "Relembrar como definir um arquivo de inicialização e sua finalidade"
+        "type": "K1",
+        "name": "Relembrar como definir um arquivo de inicialização e sua finalidade"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/init_files",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-4.3.2",
-        "tipo": "K2",
-        "nome": "Compreender a ordem de execução da configuração e do encerramento da suíte nos arquivos de inicialização e suas sub-suítes e testes|tarefas",
+        "type": "K2",
+        "name": "Compreender a ordem de execução da configuração e do encerramento da suíte nos arquivos de inicialização e suas sub-suítes e testes|tarefas",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/init_files#432-suite-setup-and-suite-teardown-of-initialization-files",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-4.3.3",
-        "tipo": "K1",
-        "nome": "Relembrar as seções permitidas e seu conteúdo nos Arquivos de Inicialização"
+        "type": "K1",
+        "name": "Relembrar as seções permitidas e seu conteúdo nos Arquivos de Inicialização"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/init_files#433-allowed-sections-in-initialization-files",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-4.4",
-        "tipo": "K1",
-        "nome": "Relembrando a finalidade das tags de teste/tarefa no Robot Framework"
+        "type": "K1",
+        "name": "Relembrando a finalidade das tags de teste/tarefa no Robot Framework"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/tags",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-4.4.1",
-        "tipo": "K1",
-        "nome": "Relembre a sintaxe e as diferentes maneiras de atribuir tags a testes|tarefas",
+        "type": "K1",
+        "name": "Relembre a sintaxe e as diferentes maneiras de atribuir tags a testes|tarefas",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/tags#441-assigning-tags-to-teststasks",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-4.4.2",
-        "tipo": "K2",
-        "nome": "Entenda como filtrar testes/tarefas usando a interface de linha de comando do Robot Framework"
+        "type": "K2",
+        "name": "Entenda como filtrar testes/tarefas usando a interface de linha de comando do Robot Framework"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/tags#442-using-tags-to-filter-execution",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-4.5-1",
-        "tipo": "K1",
-        "nome": "Relembre o caso de uso e o propósito de ignorar testes/tarefas no Robot Framework"
+        "type": "K1",
+        "name": "Relembre o caso de uso e o propósito de ignorar testes/tarefas no Robot Framework"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/skip",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-4.5-2",
-        "tipo": "K1",
-        "nome": "Relembrar as diferentes maneiras de pular testes/tarefas no Robot Framework"
+        "type": "K1",
+        "name": "Relembrar as diferentes maneiras de pular testes/tarefas no Robot Framework"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/skip",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-4.5.1",
-        "tipo": "K1",
-        "nome": "Lembre-se das diferenças entre pular e excluir",
+        "type": "K1",
+        "name": "Lembre-se das diferenças entre pular e excluir",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-04/skip#451-skipping-by-tags-selection-cli",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-5.1.1",
-        "tipo": "K2",
-        "nome": "Entenda a diferença entre variáveis ​​definidas estaticamente e variáveis ​​criadas dinamicamente no Robot Framework"
+        "type": "K2",
+        "name": "Entenda a diferença entre variáveis ​​definidas estaticamente e variáveis ​​criadas dinamicamente no Robot Framework"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-05/advanced_variables#511-variable-priorities",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-5.1.1.1",
-        "tipo": "K1",
-        "nome": "Recupere a prioridade de variáveis ​​definidas estaticamente ou importadas no Robot Framework"
+        "type": "K1",
+        "name": "Recupere a prioridade de variáveis ​​definidas estaticamente ou importadas no Robot Framework"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-05/advanced_variables#5111-statically-defined-or-imported-variables",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-5.1.1.2",
-        "tipo": "K1",
-        "nome": "Relembrar a prioridade de variáveis ​​criadas dinamicamente no Robot Framework"
+        "type": "K1",
+        "name": "Relembrar a prioridade de variáveis ​​criadas dinamicamente no Robot Framework"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-05/advanced_variables#5112-dynamically-created-variables",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-5.1.2",
-        "tipo": "K1",
-        "nome": "Relembrando os diferentes escopos de variáveis ​​no Robot Framework"
+        "type": "K1",
+        "name": "Relembrando os diferentes escopos de variáveis ​​no Robot Framework"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-05/advanced_variables#512-variable-scopes",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-5.1.2.1",
-        "tipo": "K1",
-        "nome": "Lembre-se de como definir variáveis ​​globais e onde elas podem ser acessadas",
+        "type": "K1",
+        "name": "Lembre-se de como definir variáveis ​​globais e onde elas podem ser acessadas",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-05/advanced_variables#5121--global-scope",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-5.1.2.2",
-        "tipo": "K1",
-        "nome": "Relembre como definir variáveis ​​de suíte e onde elas podem ser acessadas",
+        "type": "K1",
+        "name": "Relembre como definir variáveis ​​de suíte e onde elas podem ser acessadas",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-05/advanced_variables#5122--suite-scope",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-5.1.2.3",
-        "tipo": "K1",
-        "nome": "Lembre-se de como definir variáveis ​​de teste/tarefa e onde elas podem ser acessadas",
+        "type": "K1",
+        "name": "Lembre-se de como definir variáveis ​​de teste/tarefa e onde elas podem ser acessadas",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-05/advanced_variables#5123--testtask-scope",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-5.1.2.4",
-        "tipo": "K1",
-        "nome": "Lembre-se de como definir variáveis ​​locais e onde elas podem ser acessadas",
+        "type": "K1",
+        "name": "Lembre-se de como definir variáveis ​​locais e onde elas podem ser acessadas",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-05/advanced_variables#5124--local-scope",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-5.1.4.1",
-        "tipo": "K1",
-        "nome": "Lembre-se de que atribuições a variáveis ​​@{list} convertem valores em listas automaticamente",
+        "type": "K1",
+        "name": "Lembre-se de que atribuições a variáveis ​​@{list} convertem valores em listas automaticamente",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-05/advanced_variables#5141-assigning-list-variables",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-5.1.4.2",
-        "tipo": "K1",
-        "nome": "Lembre-se de que @{list} desempacota os valores de uma variável de lista quando acessada",
+        "type": "K1",
+        "name": "Lembre-se de que @{list} desempacota os valores de uma variável de lista quando acessada",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-05/advanced_variables#5142-accessing-list-variables",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-5.1.5.1",
-        "tipo": "K1",
-        "nome": "Lembre-se de que as atribuições a variáveis ​​&{dict} convertem automaticamente os valores em dicionários do Robot Framework e habilitam o acesso por ponto."
+        "type": "K1",
+        "name": "Lembre-se de que as atribuições a variáveis ​​&{dict} convertem automaticamente os valores em dicionários do Robot Framework e habilitam o acesso por ponto."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-05/advanced_variables#5151-assigning-dictionary-variables",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-5.1.5.2",
-        "tipo": "K1",
-        "nome": "Lembre-se de que &{dict} se descompacta em vários pares chave=valor quando acessado",
+        "type": "K1",
+        "name": "Lembre-se de que &{dict} se descompacta em vários pares chave=valor quando acessado",
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-05/advanced_variables#5152-accessing-dictionary-variables",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-5.1.6",
-        "tipo": "K1",
-        "nome": "Lembre-se de que o Robot Framework fornece acesso a informações de execução por meio de variáveis ​​internas."
+        "type": "K1",
+        "name": "Lembre-se de que o Robot Framework fornece acesso a informações de execução por meio de variáveis ​​internas."
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-05/advanced_variables#516-built-in-variables",
-        "hora_minuto": 5
+        "time_min": 5
       },
       {
         "id": "LO-5.2.1",
-        "tipo": "K2",
-        "nome": "Compreender o propósito e o conceito básico das instruções IF"
+        "type": "K2",
+        "name": "Compreender o propósito e o conceito básico das instruções IF"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-05/control_structures#521-if-statements",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-5.2.4",
-        "tipo": "K2",
-        "nome": "Entender o propósito e o conceito básico dos laços FOR"
+        "type": "K2",
+        "name": "Entender o propósito e o conceito básico dos laços FOR"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-05/control_structures#524-for-loops",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-5.2.5",
-        "tipo": "K2",
-        "nome": "Compreender o propósito e o conceito básico dos loops WHILE"
+        "type": "K2",
+        "name": "Compreender o propósito e o conceito básico dos loops WHILE"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-05/control_structures#525-while-loops",
-        "hora_minuto": 15
+        "time_min": 15
       },
       {
         "id": "LO-5.2.6",
-        "tipo": "K2",
-        "nome": "Compreender o propósito e o conceito básico das instruções BREAK e CONTINUE"
+        "type": "K2",
+        "name": "Compreender o propósito e o conceito básico das instruções BREAK e CONTINUE"
         "url": "https://robotframework.org/robotframework-RFCP-syllabus/docs/chapter-05/control_structures#526-break-and-continue",
-        "hora_minuto": 15
+        "time_min": 15
       }  
     ]
 }
