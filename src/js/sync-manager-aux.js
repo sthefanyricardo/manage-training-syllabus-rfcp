@@ -8,6 +8,45 @@ const advancedOptions = document.getElementById('advanced-options');
 const loading = document.getElementById('loading');
 const instructions = document.getElementById('instructions');
 
+// Wire the Run Unit Tests button to the headless runner.
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('run-unit-tests-btn');
+    const linkContainer = document.createElement('div');
+    linkContainer.id = 'unit-test-results-link';
+    linkContainer.style.marginTop = '12px';
+    btn.parentElement.appendChild(linkContainer);
+
+    btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    btn.textContent = 'Executando...';
+    try {
+        if (!window.testRunner || !window.testRunner.runUnitTestsHeadless) {
+        alert('Runner de testes não está disponível. Certifique-se de que src/js/test-sync.js foi carregado.');
+        return;
+        }
+        const results = await window.testRunner.runUnitTestsHeadless();
+        // store results for the test page to read
+        localStorage.setItem('unit_test_results', JSON.stringify(results));
+
+        // create link to test-sync.html that will show only the results
+        const a = document.createElement('a');
+        a.href = 'test-sync.html?show=unit';
+        a.textContent = 'Ver resultados dos unit tests';
+        a.className = 'btn-primary';
+        a.style.marginLeft = '8px';
+        linkContainer.innerHTML = '';
+        linkContainer.appendChild(a);
+        btn.textContent = 'Executar Unit Tests';
+    } catch (e) {
+        console.error('Erro ao executar unit tests', e);
+        alert('Erro ao executar unit tests: ' + (e.message || e));
+        btn.textContent = 'Executar Unit Tests';
+    } finally {
+        btn.disabled = false;
+    }
+    });
+});
+  
 // Mostrar alert
 function showAlert(message, type = 'info') {
     alertContainer.innerHTML = `
