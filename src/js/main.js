@@ -602,6 +602,8 @@ const setupProgressActions = (objectives, completedIds, completionDates, onUpdat
                 e.target.value = ''; // Reset input
             }
         });
+    } else if (btnImport && !importFile) {
+        console.warn('[RFCP] Botão de importar encontrado, mas input de arquivo não disponível.');
     }
 
     if (btnReset) {
