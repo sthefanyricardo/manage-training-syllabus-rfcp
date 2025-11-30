@@ -1,6 +1,216 @@
 // src/js/sync-manager.js
 // GitHub Gist Sync Manager para RFCP Tracker
 
+const syncManager = new window.SyncManager();
+    const form = document.getElementById('sync-form');
+    const tokenInput = document.getElementById('github-token');
+    const alertContainer = document.getElementById('alert-container');
+    const statusBadge = document.getElementById('status-badge');
+    const syncInfo = document.getElementById('sync-info');
+    const advancedOptions = document.getElementById('advanced-options');
+    const loading = document.getElementById('loading');
+    const instructions = document.getElementById('instructions');
+
+    // Mostrar alert
+    function showAlert(message, type = 'info') {
+      alertContainer.innerHTML = `
+        <div class="alert alert-${type}">
+          ${message}
+        </div>
+      `;
+      setTimeout(() => {
+        alertContainer.innerHTML = '';
+      }, 5000);
+    }
+
+    // Atualizar UI baseado no status
+    function updateUI() {
+      const status = syncManager.getStatus();
+      // If the manager says we're rate-limited, show a prominent banner and
+      // disable any remote actions so the user doesn't keep hitting the API.
+      if (status.rateLimitedUntil) {
+        const resetDate = new Date(status.rateLimitedUntil);
+        statusBadge.innerHTML = `<span class="status-badge status-rate-limited">✗ API Rate Limit — reset em ${resetDate.toLocaleString()}</span>`;
+        syncInfo.style.display = status.enabled ? 'block' : 'none';
+        advancedOptions.style.display = status.enabled ? 'block' : 'none';
+        instructions.style.display = 'none';
+        tokenInput.value = status.enabled ? '••••••••••••••••••••' : '';
+        tokenInput.disabled = true;
+        const enableBtn = document.getElementById('enable-btn');
+        enableBtn.textContent = status.enabled ? 'Atualizar Token' : 'Ativar Sincronização';
+        enableBtn.disabled = true;
+
+        // disable force buttons while rate-limited
+        const fu = document.getElementById('force-upload-btn');
+        const fd = document.getElementById('force-download-btn');
+        if (fu) fu.disabled = true;
+        if (fd) fd.disabled = true;
+
+        alertContainer.innerHTML = `\n          <div class="alert alert-error">\n            API rate limit atingida — operações remotas desativadas até <strong>${resetDate.toLocaleString()}</strong>.\n          </div>`;
+        // update basic sync info if available
+        document.getElementById('last-sync').textContent = status.lastSync ? new Date(status.lastSync).toLocaleString() : 'Nunca';
+        document.getElementById('gist-id').textContent = status.gistId || '-';
+        return;
+      }
+
+      if (status.enabled) {
+        statusBadge.innerHTML = '<span class="status-badge status-enabled">✓ Sincronização Ativa</span>';
+        syncInfo.style.display = 'block';
+        advancedOptions.style.display = 'block';
+        instructions.style.display = 'none';
+        tokenInput.value = '••••••••••••••••••••';
+        tokenInput.disabled = true;
+        document.getElementById('enable-btn').textContent = 'Atualizar Token';
+        document.getElementById('enable-btn').disabled = true;
+
+        // ensure force buttons are enabled when not rate-limited
+        const fu = document.getElementById('force-upload-btn');
+        const fd = document.getElementById('force-download-btn');
+        if (fu) fu.disabled = false;
+        if (fd) fd.disabled = false;
+        alertContainer.innerHTML = '';
+
+        // Atualizar informações
+        document.getElementById('last-sync').textContent = 
+          status.lastSync ? new Date(status.lastSync).toLocaleString() : 'Nunca';
+        document.getElementById('gist-id').textContent = status.gistId || '-';
+      } else {
+        statusBadge.innerHTML = '<span class="status-badge status-disabled">✗ Sincronização Desativada</span>';
+        syncInfo.style.display = 'none';
+        advancedOptions.style.display = 'none';
+        instructions.style.display = 'block';
+        tokenInput.disabled = false;
+        tokenInput.value = '';
+        document.getElementById('enable-btn').textContent = 'Ativar Sincronização';
+        document.getElementById('enable-btn').disabled = false;
+
+        // ensure force buttons are disabled when sync is not enabled
+        const fu = document.getElementById('force-upload-btn');
+        const fd = document.getElementById('force-download-btn');
+        if (fu) fu.disabled = true;
+        if (fd) fd.disabled = true;
+      }
+    }
+
+    // Ativar sincronização
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const token = tokenInput.value.trim();
+      
+      if (!token || token === '••••••••••••••••••••') {
+        showAlert('Por favor, insira um token válido', 'error');
+        return;
+      }
+
+      loading.classList.add('active');
+      
+      try {
+        const result = await syncManager.setupSync(token);
+        showAlert(result.message, 'success');
+        updateUI();
+        
+        // Sincronizar dados existentes
+        const localProgress = localStorage.getItem('rfcpProgressv2');
+        if (localProgress) {
+          const data = JSON.parse(localProgress);
+          await syncManager.forceSyncFromLocal(data);
+          showAlert('Progresso local sincronizado com sucesso!', 'success');
+        }
+      } catch (error) {
+        showAlert(error.message, 'error');
+      } finally {
+        loading.classList.remove('active');
+      }
+    });
+
+    // Testar conexão
+    document.getElementById('test-btn').addEventListener('click', async () => {
+      const token = tokenInput.value.trim();
+      
+      if (!token) {
+        showAlert('Por favor, insira um token primeiro', 'error');
+        return;
+      }
+
+      loading.classList.add('active');
+      
+      try {
+        const response = await fetch('https://api.github.com/user', {
+          headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+
+        if (response.ok) {
+          const user = await response.json();
+          showAlert(`✓ Conexão bem-sucedida! Autenticado como: ${user.login}`, 'success');
+        } else {
+          showAlert('✗ Token inválido ou sem permissões adequadas', 'error');
+        }
+      } catch (error) {
+        showAlert('Erro ao testar conexão: ' + error.message, 'error');
+      } finally {
+        loading.classList.remove('active');
+      }
+    });
+
+    // Forçar upload
+    document.getElementById('force-upload-btn').addEventListener('click', async () => {
+      loading.classList.add('active');
+      
+      try {
+        const localProgress = localStorage.getItem('rfcpProgressv2');
+        if (!localProgress) {
+          showAlert('Nenhum progresso local para sincronizar', 'error');
+          return;
+        }
+        
+        const data = JSON.parse(localProgress);
+        await syncManager.forceSyncFromLocal(data);
+        showAlert('Progresso enviado para o GitHub com sucesso!', 'success');
+        updateUI();
+      } catch (error) {
+        showAlert('Erro ao enviar progresso: ' + error.message, 'error');
+      } finally {
+        loading.classList.remove('active');
+      }
+    });
+
+    // Forçar download
+    document.getElementById('force-download-btn').addEventListener('click', async () => {
+      if (!confirm('Isso irá sobrescrever seu progresso local com os dados do GitHub. Deseja continuar?')) {
+        return;
+      }
+
+      loading.classList.add('active');
+      
+      try {
+        const remoteData = await syncManager.forceSyncFromRemote();
+        localStorage.setItem('rfcpProgressv2', JSON.stringify(remoteData));
+        showAlert('Progresso baixado do GitHub com sucesso!', 'success');
+        updateUI();
+      } catch (error) {
+        showAlert('Erro ao baixar progresso: ' + error.message, 'error');
+      } finally {
+        loading.classList.remove('active');
+      }
+    });
+
+    // Desativar sincronização
+    document.getElementById('disable-btn').addEventListener('click', () => {
+      if (!confirm('Deseja realmente desativar a sincronização? Seus dados locais não serão afetados.')) {
+        return;
+      }
+
+      syncManager.disable();
+      showAlert('Sincronização desativada', 'info');
+      updateUI();
+    });
+
+    // Inicializar UI
+    updateUI();
+    
 class SyncManager {
     constructor() {
         this.gistId = localStorage.getItem('rfcp_gist_id');
@@ -8,6 +218,42 @@ class SyncManager {
         this.syncEnabled = !!this.token;
         this.lastSync = null;
         this.syncInProgress = false;
+        // Load persisted rate-limit state (ISO string) if present
+        const storedReset = localStorage.getItem('rfcp_rate_limited_until');
+        this._rateLimitedUntil = storedReset ? new Date(storedReset) : null; // cache reset time when rate-limited
+    }
+
+    // Parse rate-limit info from a response (returns { isRateLimit, resetDate })
+    _parseRateLimitInfo(response, bodyText) {
+        try {
+            const body = bodyText ? JSON.parse(bodyText) : null;
+            const msg = body && body.message ? String(body.message) : '';
+            const isRateLimit = /rate limit/i.test(msg) || response.status === 429 || response.status === 403 && /rate limit/i.test(msg);
+            const resetHeader = response.headers && (response.headers.get ? response.headers.get('x-ratelimit-reset') : null);
+            let resetDate = null;
+            if (resetHeader) {
+                const seconds = Number(resetHeader);
+                if (!Number.isNaN(seconds)) resetDate = new Date(seconds * 1000);
+            }
+            return { isRateLimit, resetDate };
+        } catch (e) {
+            return { isRateLimit: false, resetDate: null };
+        }
+    }
+
+    _setRateLimited(resetDate) {
+        if (resetDate && !(resetDate instanceof Date)) {
+            resetDate = new Date(resetDate);
+        }
+        this._rateLimitedUntil = resetDate || this._rateLimitedUntil || null;
+        if (this._rateLimitedUntil) {
+            try { localStorage.setItem('rfcp_rate_limited_until', this._rateLimitedUntil.toISOString()); } catch(e){}
+        }
+    }
+
+    _clearRateLimit() {
+        this._rateLimitedUntil = null;
+        try { localStorage.removeItem('rfcp_rate_limited_until'); } catch(e){}
     }
 
     // Configurar sincronização com GitHub
@@ -102,11 +348,22 @@ class SyncManager {
 
         if (!response.ok) {
             const body = await response.text().catch(() => '');
+            const info = this._parseRateLimitInfo(response, body);
+            if (info.isRateLimit) {
+                this._setRateLimited(info.resetDate);
+                const resetMsg = info.resetDate ? ` (resets at ${info.resetDate.toISOString()})` : '';
+                console.error('fetchGists failed: rate limit exceeded' + resetMsg, body);
+                throw new Error(`Rate limit excedido${resetMsg}`);
+            }
+
             console.error('fetchGists failed:', response.status, body);
             throw new Error(`Erro ao buscar gists: ${response.status} ${body}`);
         }
 
-        return await response.json();
+        const json = await response.json();
+        // successful fetch, clear any previous rate-limit state
+        this._clearRateLimit();
+        return json;
     }
 
     // Criar novo gist
@@ -153,11 +410,21 @@ class SyncManager {
 
         if (!response.ok) {
             const body = await response.text().catch(() => '');
+            const info = this._parseRateLimitInfo(response, body);
+            if (info.isRateLimit) {
+                this._setRateLimited(info.resetDate);
+                const resetMsg = info.resetDate ? ` (resets at ${info.resetDate.toISOString()})` : '';
+                console.error('createGist failed: rate limit exceeded' + resetMsg, body);
+                throw new Error(`Rate limit excedido${resetMsg}`);
+            }
+
             console.error('createGist failed:', response.status, body);
             throw new Error(`Erro ao criar gist: ${response.status} ${body}`);
         }
 
-        return await response.json();
+        const json = await response.json();
+        this._clearRateLimit();
+        return json;
     }
 
     // Sincronizar progresso local com remoto
@@ -207,6 +474,14 @@ class SyncManager {
 
         if (!response.ok) {
             const body = await response.text().catch(() => '');
+            const info = this._parseRateLimitInfo(response, body);
+            if (info.isRateLimit) {
+                this._setRateLimited(info.resetDate);
+                const resetMsg = info.resetDate ? ` (resets at ${info.resetDate.toISOString()})` : '';
+                console.error('fetchRemoteProgress failed: rate limit exceeded' + resetMsg, body);
+                throw new Error(`Rate limit excedido${resetMsg}`);
+            }
+
             console.warn('fetchRemoteProgress failed:', response.status, body);
 
             if (response.status === 404) {
@@ -218,15 +493,18 @@ class SyncManager {
                         'Accept': 'application/vnd.github.v3+json'
                     }
                 });
+
+                if (!response.ok) {
+                    const body2 = await response.text().catch(() => '');
+                    throw new Error(`Erro ao buscar progresso remoto (após tentativa): ${response.status} ${body2}`);
+                }
+            } else {
+                throw new Error(`Erro ao buscar progresso remoto: ${response.status} ${body}`);
             }
         }
 
-        if (!response.ok) {
-            const body = await response.text().catch(() => '');
-            throw new Error(`Erro ao buscar progresso remoto: ${response.status} ${body}`);
-        }
-
         const gist = await response.json();
+        this._clearRateLimit();
         const content = gist.files['rfcp-progress.json'].content;
         return JSON.parse(content);
     }
@@ -259,6 +537,14 @@ class SyncManager {
         });
         if (!response.ok) {
             const body = await response.text().catch(() => '');
+            const info = this._parseRateLimitInfo(response, body);
+            if (info.isRateLimit) {
+                this._setRateLimited(info.resetDate);
+                const resetMsg = info.resetDate ? ` (resets at ${info.resetDate.toISOString()})` : '';
+                console.error('saveRemoteProgress failed: rate limit exceeded' + resetMsg, body);
+                throw new Error(`Rate limit excedido${resetMsg}`);
+            }
+
             console.warn('saveRemoteProgress failed:', response.status, body);
 
             if (response.status === 404 || response.status === 409) {
@@ -283,17 +569,30 @@ class SyncManager {
 
                 if (!retryResp.ok) {
                     const retryBody = await retryResp.text().catch(() => '');
+                    // Check rate-limit on retry
+                    const retryInfo = this._parseRateLimitInfo(retryResp, retryBody);
+                    if (retryInfo.isRateLimit) {
+                        this._setRateLimited(retryInfo.resetDate);
+                        const resetMsg2 = retryInfo.resetDate ? ` (resets at ${retryInfo.resetDate.toISOString()})` : '';
+                        console.error('saveRemoteProgress retry failed: rate limit exceeded' + resetMsg2, retryBody);
+                        throw new Error(`Rate limit excedido${resetMsg2}`);
+                    }
+
                     console.error('saveRemoteProgress retry failed:', retryResp.status, retryBody);
                     throw new Error(`Erro ao salvar progresso remoto (retry): ${retryResp.status} ${retryBody}`);
                 }
 
-                return await retryResp.json();
+                const retryJson = await retryResp.json();
+                this._clearRateLimit();
+                return retryJson;
             }
 
             throw new Error(`Erro ao salvar progresso remoto: ${response.status} ${body}`);
         }
 
-        return await response.json();
+        const json = await response.json();
+        this._clearRateLimit();
+        return json;
     }
 
     // Mesclar progresso local e remoto
@@ -344,7 +643,8 @@ class SyncManager {
             enabled: this.syncEnabled,
             lastSync: this.lastSync,
             gistId: this.gistId,
-            inProgress: this.syncInProgress
+            inProgress: this.syncInProgress,
+            rateLimitedUntil: this._rateLimitedUntil ? this._rateLimitedUntil.toISOString() : null
         };
     }
 
