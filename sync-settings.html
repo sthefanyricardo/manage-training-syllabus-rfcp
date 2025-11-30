@@ -96,16 +96,6 @@
         <p class="subtitle small">Validação completa do sistema de sincronização</p>
       </div>
 
-      <!-- Configuração -->
-      <div class="config-section">
-      <h3>⚙️ Configuração de Teste</h3>
-      <input type="password" id="test-token" placeholder="Cole seu token do GitHub para testes">
-        <div class="button-group" style="margin-top:10px;">
-          <button type="button" class="btn-primary" onclick="saveTestToken()">Salvar Token</button>
-          <button type="button" class="btn-secondary" onclick="clearTestData()">Limpar Dados de Teste</button>
-        </div>
-    </div>
-
       <!-- Resumo -->
       <div class="summary" id="summary">
         <h3>📊 Resumo dos Testes</h3>
@@ -136,6 +126,7 @@
           <button type="button" class="btn-secondary" onclick="runUnitTests()">🧩 Testes Unitários</button>
           <button type="button" class="btn-secondary" onclick="runIntegrationTests()">🔗 Testes de Integração</button>
           <button type="button" class="btn-secondary" onclick="runE2ETests()">🎭 Testes E2E</button>
+          <button type="button" class="btn-secondary" onclick="clearTestData()">Limpar Dados de Teste</button>
           <button type="button" class="btn-secondary" onclick="clearLogs()">🗑️ Limpar Log</button>
         </div>
       </div>
