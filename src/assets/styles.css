@@ -209,7 +209,19 @@ header a:hover {
 
 .objective-card.completed {
     border-left: 4px solid #667eea;
-    background: linear-gradient(to right, rgba(102, 126, 234, 0.05), white);
+    background: linear-gradient(to right, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.03));
+    position: relative;
+}
+
+.objective-card.completed::before {
+    content: '✓';
+    position: absolute;
+    top: 1rem;
+    right: 3.5rem;
+    font-size: 1.5rem;
+    color: #667eea;
+    opacity: 0.2;
+    font-weight: bold;
 }
 
 .complete-button {
@@ -269,7 +281,7 @@ header a:hover {
 }
 
 .type-K1 { background: #e3f2fd; color: #1565c0; }
-.type-K2 { background: #f3e5f5; color: #7b1fa2; }
+.type-K2 { background: #f3e5f5; color: #40c463; }
 .type-K3 { background: #fbe9e7; color: #d84315; }
 
 .objective-time {
@@ -324,6 +336,11 @@ header a:hover {
 
 .completed .mark-complete-btn {
     background: #9E9E9E;
+    opacity: 0.7;
+}
+
+.completed .objective-name {
+    color: #666;
 }
 
 .objective-link:hover {
