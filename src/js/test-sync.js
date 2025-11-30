@@ -77,21 +77,21 @@ class TestFixer {
   patchTokenCapture() {
     // Função helper para obter token de múltiplas fontes
     window.getAvailableTestToken = function() {
-      // 1. Tentar capturar do campo na página
-      const tokenInput = document.getElementById('github-token');
-      if (tokenInput && tokenInput.value && tokenInput.value.length > 20) {
-        return tokenInput.value;
+      // 1. Tentar localStorage principal (prioridade máxima - token real)
+      const mainToken = localStorage.getItem('rfcp_github_token');
+      if (mainToken && mainToken.length > 20 && !mainToken.includes('•')) {
+        return mainToken;
       }
       
-      // 2. Tentar localStorage principal
-      const mainToken = localStorage.getItem('rfcp_github_token');
-      if (mainToken && mainToken.length > 20) {
-        return mainToken;
+      // 2. Tentar capturar do campo na página (se não estiver mascarado)
+      const tokenInput = document.getElementById('github-token');
+      if (tokenInput && tokenInput.value && tokenInput.value.length > 20 && !tokenInput.value.includes('•')) {
+        return tokenInput.value;
       }
       
       // 3. Tentar localStorage de teste
       const testToken = localStorage.getItem('test_github_token');
-      if (testToken && testToken.length > 20) {
+      if (testToken && testToken.length > 20 && !testToken.includes('•')) {
         return testToken;
       }
       
@@ -609,7 +609,9 @@ class TestManager {
     const availableToken = window.getAvailableTestToken?.();
     if (availableToken) {
       this.testToken = availableToken;
-      console.log('🔑 Token capturado automaticamente da interface');
+      console.log('✅ Token capturado automaticamente da interface');
+    } else {
+      console.warn('⚠️ Nenhum token encontrado. Configure um token no campo "Token do GitHub" para executar testes de integração.');
     }
   }
 
