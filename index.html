@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rastreador de Estudos RFCP</title>
+  <title>Painel Acompanhamento de Estudos RFCP®</title>
   <link rel="stylesheet" href="src/assets/styles.css" />
   <link rel="stylesheet" href="src/assets/contribution-grid.css" />
   <link rel="icon" href="src/assets/favicon.ico" type="image/x-icon" />
@@ -11,14 +11,14 @@
 <body>
   <!-- Banner de erro para falhas no carregamento do JSON -->
   <div id="error-banner" class="error-banner" role="alert" hidden>
-    <span id="error-banner-message">Erro ao carregar objetivos — ver console / arquivo src/data/syllabus_rfcp.json</span>
+    <span id="error-banner-message">Erro ao carregar objetivos data JSON — ver console / arquivo src/data/syllabus_rfcp.json</span>
     <button id="error-banner-close" class="error-banner-close" aria-label="Fechar mensagem de erro">&times;</button>
   </div>
 
   <header>
-    <h1>Rastreador de Estudos RFCP®</h1>
+    <h1>Painel Acompanhamento de Estudos RFCP®</h1>
     <p>
-      Acompanhe seu progresso de aprendizado para o exame
+      Neste painel, acompanhe e compartilhe a sua jornada de aprendizado rumo à certificação
       <a href="https://robotframework.org/robotframework-RFCP-syllabus/" target="_blank" rel="noopener">
         Robot Framework® Certified Professional (RFCP®)
       </a>
@@ -27,7 +27,7 @@
 
   <main>
     <div class="preferences">
-      <h2>Progresso de estudo</h2>
+      <h2>Monitor de Progresso Diário</h2>
 
       <div class="progress-bar">
         <div id="progress" class="progress"></div>
@@ -67,11 +67,11 @@
 
       <!-- Botões de gerenciamento de progresso -->
       <div class="progress-actions">
-        <button id="btn-export" class="action-btn" aria-label="Exportar progresso como arquivo JSON">Exportar progresso</button>
-        <button id="btn-import" class="action-btn" aria-label="Importar progresso de um arquivo JSON">Importar progresso</button>
+        <button id="btn-export" class="action-btn" aria-label="Exportar histórico de progresso como arquivo JSON">Exportar meu histórico</button>
+        <button id="btn-import" class="action-btn" aria-label="Carregar histórico de progresso de um arquivo JSON">Importar meu histórico</button>
         <input type="file" id="import-file" accept=".json" hidden aria-hidden="true">
-        <button id="btn-reset" class="action-btn action-btn-danger" aria-label="Resetar todo o progresso">Resetar progresso</button>
-        <button id="btn-demo" class="action-btn action-btn-secondary" aria-label="Popular progresso com dados de demonstração">Popular demo</button>
+        <button id="btn-reset" class="action-btn action-btn-danger" aria-label="Resetar todo o histórico de progresso atual">Recomeçar do zero</button>
+        <button id="btn-demo" class="action-btn action-btn-secondary" aria-label="Exemplo de histórico de progresso com dados de demonstração">Ver exemplo de preenchimento</button>
       </div>
     </div>
 
@@ -111,18 +111,21 @@
       Licenciado sob a <a href="./LICENSE" target="_blank" rel="noopener">Licença MIT</a>.
     </p>
     <p>
-      Construído para
-      <a href="https://robotframework.org/robotframework-RFCP-syllabus/docs/learning_objectives" target="_blank" rel="noopener">
-        Estudo RFCP
+      Este painel foi criado para acompanhar o meu progresso de estudos para a certificação
+      <a href="https://cert.robotframework.org/certificates/RFCP" target="_blank" rel="noopener">
+        Robot Framework® Certified Professional RFCP®.
       </a>
     </p>
     <p>
-      Este rastreador de estudos é um projeto independente criado exclusivamente para fins educacionais e de estudo pessoal.
-      Não é afiliado, endossado ou patrocinado pela organização Robot Framework ou seu programa de certificação.
-      Todas as marcas registradas, logotipos e materiais relacionados são propriedade de seus respectivos proprietários.
+      É um projeto independente, desenvolvido para fins educacionais e de estudo pessoal, sem qualquer afiliação, endosso ou patrocínio 
+      oficial da organização Robot Framework Foundation® ou do programa oficial de certificação RFCP®. 
     </p>
     <p>
-      Favicon fornecido por <a href="https://icons8.com" target="_blank" rel="noopener">Icons8</a>
+      Todas as marcas registradas, logotipos
+      e materias relacionados são propriedade de seus respectivos titulares.
+    </p>
+    <p>
+      Ícones fornecidos por <a href="https://icons8.com" target="_blank" rel="noopener">Icons8</a>
     </p>
   </footer>
 
