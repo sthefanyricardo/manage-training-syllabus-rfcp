@@ -48,17 +48,16 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
+    background-color: #f5f5f5;
 }
 
 header {
     text-align: center;
     margin-bottom: 2rem;
     padding: 2rem 1rem;
-    background: rgba(255, 255, 255, 0.95);
+    background: white;
     border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 header h1 {
@@ -74,6 +73,11 @@ header p {
 header a {
     color: #764ba2;
     font-weight: 600;
+    text-decoration: none;
+}
+
+header a:hover {
+    text-decoration: underline;
 }
 
 .preferences {
