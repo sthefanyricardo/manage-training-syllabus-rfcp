@@ -32,24 +32,24 @@
 
 .contribution-cell:hover,
 .contribution-cell:focus {
-    outline: 2px solid #4285F4;
+    outline: 2px solid #667eea;
     outline-offset: 1px;
 }
 
 .contribution-cell.level-1 {
-    background-color: #9be9a8;
+    background-color: #c7b3ff;
 }
 
 .contribution-cell.level-2 {
-    background-color: #40c463;
+    background-color: #9b7de8;
 }
 
 .contribution-cell.level-3 {
-    background-color: #30a14e;
+    background-color: #764ba2;
 }
 
 .contribution-cell.level-4 {
-    background-color: #216e39;
+    background-color: #5a3477;
 }
 
 .contribution-legend {
@@ -80,19 +80,19 @@
 }
 
 .legend-color.level-1 {
-    background-color: #9be9a8;
+    background-color: #c7b3ff;
 }
 
 .legend-color.level-2 {
-    background-color: #40c463;
+    background-color: #9b7de8;
 }
 
 .legend-color.level-3 {
-    background-color: #30a14e;
+    background-color: #764ba2;
 }
 
 .legend-color.level-4 {
-    background-color: #216e39;
+    background-color: #5a3477;
 }
 
 .contribution-tooltip {
