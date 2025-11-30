@@ -210,18 +210,6 @@ header a:hover {
 .objective-card.completed {
     border-left: 4px solid #667eea;
     background: linear-gradient(to right, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.03));
-    position: relative;
-}
-
-.objective-card.completed::before {
-    content: '✓';
-    position: absolute;
-    top: 1rem;
-    right: 3.5rem;
-    font-size: 1.5rem;
-    color: #667eea;
-    opacity: 0.2;
-    font-weight: bold;
 }
 
 .complete-button {
@@ -281,7 +269,7 @@ header a:hover {
 }
 
 .type-K1 { background: #e3f2fd; color: #1565c0; }
-.type-K2 { background: #bfefcc; color: #40c463; }
+.type-K2 { background: #d7fae1; color: #40c463; }
 .type-K3 { background: #fbe9e7; color: #d84315; }
 
 .objective-time {
@@ -293,7 +281,7 @@ header a:hover {
     margin-bottom: 0.5rem;
     font-size: 1rem;
     font-weight: 500;
-}
+}rgb(199, 234, 208)rgb(213, 245, 222)rgb(223, 247, 230)
 
 .objective-link {
     display: block;
