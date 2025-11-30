@@ -6,9 +6,11 @@
   <title>Painel Acompanhamento de Estudos RFCP®</title>
   <link rel="stylesheet" href="src/assets/styles.css" />
   <link rel="stylesheet" href="src/assets/contribution-grid.css" />
+  <link rel="stylesheet" href="src/assets/sync-styless-main.css" />
   <link rel="icon" href="src/assets/favicon.ico" type="image/x-icon" />
 </head>
 <body>
+  
   <!-- Banner de erro para falhas no carregamento do JSON -->
   <div id="error-banner" class="error-banner" role="alert" hidden>
     <span id="error-banner-message">Erro ao carregar objetivos data JSON — ver console / arquivo src/data/syllabus_rfcp.json</span>
@@ -129,7 +131,9 @@
     </p>
   </footer>
 
+  <script src="src/js/sync-manager.js"></script>
   <script src="src/js/confetti.js"></script>
   <script src="src/js/main.js"></script>
+
 </body>
 </html>

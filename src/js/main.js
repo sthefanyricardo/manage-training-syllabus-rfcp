@@ -1,3 +1,10 @@
+// ============================================
+// RFCP Tracker - main.js com Sincronização
+// ============================================
+
+// ✅ NOVA VARIÁVEL: Instância do SyncManager
+let syncManager = null;
+
 // Load RFCP data (mais robusto: lê como texto e faz JSON.parse com try/catch)
 let loadError = false;
 
@@ -35,18 +42,85 @@ const loadObjectives = async () => {
     }
 };
 
-// Load progress from localStorage
-const loadProgress = () => {
-    const progress = localStorage.getItem('rfcpProgressv2');
-    return progress ? JSON.parse(progress) : { completedIds: [], completionDates: {} };
+// ✅ MODIFICADO: Load progress com sincronização
+const loadProgress = async () => {
+    const localProgress = localStorage.getItem('rfcpProgressv2');
+    const local = localProgress ? JSON.parse(localProgress) : { completedIds: [], completionDates: {} };
+    
+    // NOVO: Tentar sincronizar se habilitado
+    if (syncManager && syncManager.syncEnabled) {
+        try {
+            console.log('🔄 Sincronizando progresso...');
+            const synced = await syncManager.sync(local);
+            saveProgress(synced.completedIds, synced.completionDates);
+            updateSyncStatus(true, 'Sincronizado');
+            return synced;
+        } catch (error) {
+            console.error('❌ Erro na sincronização:', error);
+            showSyncError('Erro ao sincronizar. Usando dados locais.');
+            updateSyncStatus(false, 'Erro na sincronização');
+            return local;
+        }
+    }
+    
+    return local;
 };
 
-// Save progress to localStorage
-const saveProgress = (completedIds, completionDates) => {
-    localStorage.setItem('rfcpProgressv2', JSON.stringify({ completedIds, completionDates }));
+// ✅ MODIFICADO: Save progress com sincronização
+const saveProgress = async (completedIds, completionDates) => {
+    const data = { completedIds, completionDates };
+    localStorage.setItem('rfcpProgressv2', JSON.stringify(data));
+    
+    // NOVO: Sincronizar em background se habilitado
+    if (syncManager && syncManager.syncEnabled) {
+        try {
+            await syncManager.saveRemoteProgress(data);
+            updateSyncStatus(true, 'Sincronizado');
+        } catch (error) {
+            console.error('❌ Erro ao sincronizar:', error);
+            updateSyncStatus(false, 'Erro na sincronização');
+        }
+    }
 };
 
-// Update progress display (protegido contra divisão por zero) — textos em PT-BR com pluralização
+// ✅ NOVA FUNÇÃO: Mostrar erro de sincronização
+const showSyncError = (message) => {
+    const existingAlert = document.querySelector('.sync-alert');
+    if (existingAlert) existingAlert.remove();
+    
+    const alert = document.createElement('div');
+    alert.className = 'sync-alert sync-alert-error';
+    alert.innerHTML = `
+        <span>⚠️ ${message}</span>
+        <button onclick="this.parentElement.remove()" aria-label="Fechar alerta">×</button>
+    `;
+    
+    const header = document.querySelector('header');
+    if (header) {
+        header.after(alert);
+        setTimeout(() => alert.remove(), 5000);
+    }
+};
+
+// ✅ NOVA FUNÇÃO: Atualizar status de sincronização na UI
+const updateSyncStatus = (success, message = '') => {
+    const statusEl = document.getElementById('sync-status');
+    if (!statusEl) return;
+    
+    if (success) {
+        statusEl.innerHTML = `✓ ${message || 'Sincronizado'}`;
+        statusEl.className = 'sync-status success';
+    } else {
+        statusEl.innerHTML = `✗ ${message || 'Erro'}`;
+        statusEl.className = 'sync-status error';
+    }
+    
+    setTimeout(() => {
+        statusEl.innerHTML = '';
+    }, 3000);
+};
+
+// ✅ MODIFICADO: Update progress com indicador de sync
 const updateProgress = (completedIds, totalCount, objectives) => {
     const completedCount = completedIds.length;
     document.getElementById('completed-count').textContent = completedCount;
@@ -74,9 +148,11 @@ const updateProgress = (completedIds, totalCount, objectives) => {
     // Pluralização correta em PT-BR
     const concluido = completedCount === 1 ? 'concluído' : 'concluídos';
 
+    // ✅ MODIFICADO: Adicionar span de sync-status
     document.querySelector('.preferences p').innerHTML =
         `<span id="completed-count">${completedCount}</span> / <span id="total-count">${totalCount}</span> ${concluido} · 
-         <span id="completed-time">${completedTime}</span> / <span id="total-time">${totalTime}</span> minutos`;
+         <span id="completed-time">${completedTime}</span> / <span id="total-time">${totalTime}</span> minutos
+         <span id="sync-status" class="sync-status"></span>`;
 };
 
 // Create objective card (texto em PT-BR) with accessibility attributes
@@ -111,13 +187,11 @@ const createObjectiveCard = (objective, isCompleted) => {
 
 // Filter objectives
 const filterObjectives = (objectives, filter = 'all', completedIds = [], searchTerm = '') => {
-    // First filter by category
     let filtered = objectives;
     if (filter === 'completed') filtered = objectives.filter(obj => completedIds.includes(obj.id));
     else if (filter === 'unfinished') filtered = objectives.filter(obj => !completedIds.includes(obj.id));
     else if (filter !== 'all') filtered = objectives.filter(obj => obj.type === filter);
 
-    // Then filter by search term if provided
     if (searchTerm.trim() !== '') {
         const term = searchTerm.toLowerCase();
         filtered = filtered.filter(obj => obj.name.toLowerCase().includes(term) || obj.id.toLowerCase().includes(term));
@@ -126,14 +200,13 @@ const filterObjectives = (objectives, filter = 'all', completedIds = [], searchT
     return filtered;
 };
 
-// Generate contribution grid for the last 30 days (tooltip custom em PT-BR)
+// Generate contribution grid for the last 30 days
 const generateContributionGrid = (completionDates) => {
     const gridContainer = document.getElementById('contribution-grid');
     if (!gridContainer) return;
 
     gridContainer.innerHTML = '';
 
-    // Get dates for the last 30 days
     const today = new Date();
     const dates = [];
 
@@ -144,7 +217,6 @@ const generateContributionGrid = (completionDates) => {
         dates.push(date);
     }
 
-    // Count completions per day
     const completionsPerDay = {};
 
     Object.values(completionDates).forEach(dateString => {
@@ -159,7 +231,6 @@ const generateContributionGrid = (completionDates) => {
         }
     });
 
-    // Create grid cells with data-attributes for custom tooltip
     dates.forEach(date => {
         const dateKey = date.toISOString().split('T')[0];
         const count = completionsPerDay[dateKey] || 0;
@@ -168,7 +239,6 @@ const generateContributionGrid = (completionDates) => {
         cell.className = 'contribution-cell';
         cell.setAttribute('tabindex', '0');
 
-        // Add level class based on count
         if (count >= 10) {
             cell.classList.add('level-4');
         } else if (count >= 7) {
@@ -179,7 +249,6 @@ const generateContributionGrid = (completionDates) => {
             cell.classList.add('level-1');
         }
 
-        // Add data-attributes for custom tooltip (PT-BR)
         const plural = count === 1 ? 'objetivo concluído' : 'objetivos concluídos';
         cell.dataset.date = date.toLocaleDateString('pt-BR');
         cell.dataset.count = count;
@@ -188,7 +257,6 @@ const generateContributionGrid = (completionDates) => {
         gridContainer.appendChild(cell);
     });
 
-    // Add custom tooltip functionality
     setupContributionTooltip();
 };
 
@@ -197,13 +265,11 @@ const setupContributionTooltip = () => {
     const gridContainer = document.getElementById('contribution-grid');
     if (!gridContainer) return;
 
-    // Remove existing tooltip if any
     const existingTooltip = document.querySelector('.contribution-tooltip');
     if (existingTooltip) {
         existingTooltip.remove();
     }
 
-    // Create tooltip element
     const tooltip = document.createElement('div');
     tooltip.className = 'contribution-tooltip';
     document.body.appendChild(tooltip);
@@ -215,7 +281,6 @@ const setupContributionTooltip = () => {
         tooltip.textContent = `${date}: ${count} ${plural}`;
         tooltip.style.opacity = '1';
 
-        // Position tooltip
         const rect = cell.getBoundingClientRect();
         tooltip.style.left = `${rect.left + window.scrollX + rect.width / 2 - tooltip.offsetWidth / 2}px`;
         tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight - 8}px`;
@@ -225,7 +290,6 @@ const setupContributionTooltip = () => {
         tooltip.style.opacity = '0';
     };
 
-    // Add event listeners to cells
     gridContainer.addEventListener('mouseover', (e) => {
         if (e.target.classList.contains('contribution-cell')) {
             showTooltip(e.target, e);
@@ -251,10 +315,55 @@ const setupContributionTooltip = () => {
     });
 };
 
-// Initialize app
+// ✅ NOVA FUNÇÃO: Adicionar botão de sincronização no header
+const addSyncButton = () => {
+    const header = document.querySelector('header');
+    if (!header) return;
+    
+    // Verificar se já existe
+    if (document.querySelector('.sync-button')) return;
+    
+    const syncButton = document.createElement('a');
+    syncButton.href = 'sync-settings.html';
+    syncButton.className = 'sync-button';
+    syncButton.innerHTML = '⚙️ Sincronização';
+    syncButton.style.cssText = `
+        display: inline-block;
+        margin-top: 15px;
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    `;
+    syncButton.onmouseover = () => {
+        syncButton.style.transform = 'translateY(-2px)';
+        syncButton.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
+    };
+    syncButton.onmouseout = () => {
+        syncButton.style.transform = 'translateY(0)';
+        syncButton.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
+    };
+    
+    header.appendChild(syncButton);
+};
+
+// ✅ MODIFICADO: Initialize app com sincronização
 const initApp = async () => {
+    // NOVO: Inicializar Sync Manager
+    if (window.SyncManager) {
+        syncManager = new window.SyncManager();
+        console.log('✅ SyncManager inicializado');
+    } else {
+        console.warn('⚠️ SyncManager não encontrado. Sincronização desabilitada.');
+    }
+    
     const objectives = await loadObjectives();
-    let { completedIds, completionDates } = loadProgress();
+    let { completedIds, completionDates } = await loadProgress(); // ✅ agora é async
     const objectivesList = document.getElementById('objectives-list');
     const filterButtons = document.querySelectorAll('.filter-btn');
     const searchInput = document.getElementById('search-input');
@@ -266,10 +375,8 @@ const initApp = async () => {
         showErrorBanner();
     }
 
-    // Setup error banner close button
     setupErrorBannerClose();
 
-    // Se não houver objetivos, mostra mensagem e desabilita filtros/busca
     if (!objectives || objectives.length === 0) {
         if (objectivesList) {
             objectivesList.innerHTML = '<p style="color:#666">Nenhum objetivo carregado. Verifique o arquivo <code>src/data/syllabus_rfcp.json</code> no repositório.</p>';
@@ -277,19 +384,17 @@ const initApp = async () => {
         if (searchInput) searchInput.disabled = true;
         filterButtons.forEach(b => b.disabled = true);
 
-        // Atualiza progress com zeros e retorna
         updateProgress(completedIds, 0, []);
         generateContributionGrid(completionDates);
         return;
     }
 
-    // Update progress display with objectives data
-    updateProgress(completedIds, objectives.length, objectives);
+    // ✅ NOVO: Adicionar botão de sincronização
+    addSyncButton();
 
-    // Generate contribution grid
+    updateProgress(completedIds, objectives.length, objectives);
     generateContributionGrid(completionDates);
 
-    // Render objectives
     const renderObjectives = (filter, search = '') => {
         const filteredObjectives = filterObjectives(objectives, filter, completedIds, search);
         objectivesList.innerHTML = '';
@@ -301,7 +406,6 @@ const initApp = async () => {
         });
     };
 
-    // Handle filter clicks
     filterButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             filterButtons.forEach(b => b.classList.remove('active'));
@@ -311,7 +415,6 @@ const initApp = async () => {
         });
     });
 
-    // Handle search input
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             currentSearch = e.target.value;
@@ -319,8 +422,8 @@ const initApp = async () => {
         });
     }
 
-    // Handle objective clicks (toggle conclusão)
-    objectivesList.addEventListener('click', (e) => {
+    // ✅ MODIFICADO: Handle objective clicks com await
+    objectivesList.addEventListener('click', async (e) => { // ✅ adicionar async
         const card = e.target.closest('.objective-card');
         if (!card || e.target.classList.contains('objective-link')) return;
 
@@ -333,7 +436,6 @@ const initApp = async () => {
             completionDates[objectiveId] = new Date().toISOString();
             card.classList.add('completed');
 
-            // Trigger confetti effect at the click position
             if (window.confetti) {
                 window.confetti.burst(e.clientX, e.clientY);
             }
@@ -343,7 +445,6 @@ const initApp = async () => {
             card.classList.remove('completed');
         }
 
-        // Atualiza texto do botão de marcar/mostrar estado e aria-pressed
         const markBtn = card.querySelector('.mark-complete-btn');
         const completeBtn = card.querySelector('.complete-button');
         const newState = !wasCompleted;
@@ -355,13 +456,12 @@ const initApp = async () => {
             completeBtn.setAttribute('aria-pressed', newState ? 'true' : 'false');
         }
 
-        saveProgress(completedIds, completionDates);
+        await saveProgress(completedIds, completionDates); // ✅ adicionar await
         updateProgress(completedIds, objectives.length, objectives);
-        generateContributionGrid(completionDates); // Update the contribution grid
-        renderObjectives(currentFilter, currentSearch); // Re-render com filtro atual e busca
+        generateContributionGrid(completionDates);
+        renderObjectives(currentFilter, currentSearch);
     });
 
-    // Setup export/import/reset/demo buttons
     setupProgressActions(objectives, completedIds, completionDates, () => {
         const progress = loadProgress();
         completedIds.length = 0;
@@ -373,27 +473,20 @@ const initApp = async () => {
         renderObjectives(currentFilter, currentSearch);
     });
 
-    // Initial render
     renderObjectives(currentFilter);
 };
 
-// Show error banner
+// Show/hide error banner
 const showErrorBanner = () => {
     const banner = document.getElementById('error-banner');
-    if (banner) {
-        banner.hidden = false;
-    }
+    if (banner) banner.hidden = false;
 };
 
-// Hide error banner
 const hideErrorBanner = () => {
     const banner = document.getElementById('error-banner');
-    if (banner) {
-        banner.hidden = true;
-    }
+    if (banner) banner.hidden = true;
 };
 
-// Setup error banner close button
 const setupErrorBannerClose = () => {
     const closeBtn = document.getElementById('error-banner-close');
     if (closeBtn) {
@@ -401,7 +494,7 @@ const setupErrorBannerClose = () => {
     }
 };
 
-// Export progress to JSON file
+// Export/Import/Reset/Demo functions (mantidas sem alteração)
 const exportProgress = () => {
     const progress = loadProgress();
     const dataStr = JSON.stringify(progress, null, 2);
@@ -416,13 +509,11 @@ const exportProgress = () => {
     URL.revokeObjectURL(url);
 };
 
-// Import progress from JSON file
 const importProgress = (file, onUpdate) => {
     const reader = new FileReader();
     reader.onload = (e) => {
         try {
             const data = JSON.parse(e.target.result);
-            // Validate format
             if (!data || !Array.isArray(data.completedIds) || typeof data.completionDates !== 'object') {
                 alert('Formato de arquivo inválido. O arquivo deve conter "completedIds" (array) e "completionDates" (objeto).');
                 return;
@@ -438,16 +529,14 @@ const importProgress = (file, onUpdate) => {
     reader.readAsText(file);
 };
 
-// Reset progress
-const resetProgress = (onUpdate) => {
-    if (confirm('Tem certeza que deseja resetar todo o progresso? Esta ação não pode ser desfeita.')) {
-        saveProgress([], {});
+const resetProgress = async (onUpdate) => { // Adicionar async
+    if (confirm('Tem certeza que deseja resetar todo o progresso?')) {
+        await saveProgress([], {}); // Adicionar await
         if (onUpdate) onUpdate();
         alert('Progresso resetado com sucesso!');
     }
 };
 
-// Generate random date within last 30 days (for demo)
 const getRandomDate = () => {
     const today = new Date();
     const daysAgo = Math.floor(Math.random() * 30);
@@ -456,13 +545,11 @@ const getRandomDate = () => {
     return date.toISOString();
 };
 
-// Populate demo progress
 const populateDemo = (objectives, onUpdate) => {
     if (confirm('Isto irá substituir seu progresso atual com dados de demonstração. Continuar?')) {
         const completedIds = [];
         const completionDates = {};
         
-        // Randomly complete 50-80% of objectives
         const totalToComplete = Math.floor(objectives.length * (DEMO_MIN_COMPLETION_RATE + Math.random() * DEMO_COMPLETION_RANGE));
         const shuffled = [...objectives].sort(() => 0.5 - Math.random());
         const selectedObjectives = shuffled.slice(0, totalToComplete);
@@ -478,21 +565,17 @@ const populateDemo = (objectives, onUpdate) => {
     }
 };
 
-// Helper function to find element using multiple strategies
 const findElement = (idCandidates, dataActionValue, textKeywords, tagName = 'button') => {
-    // Strategy 1: Try multiple IDs
     for (const id of idCandidates) {
         const el = document.getElementById(id);
         if (el) return el;
     }
 
-    // Strategy 2: Try data-action attribute
     if (dataActionValue) {
         const el = document.querySelector(`[data-action="${dataActionValue}"]`);
         if (el) return el;
     }
 
-    // Strategy 3: Find by text content (case-insensitive)
     if (textKeywords && textKeywords.length > 0) {
         const elements = document.querySelectorAll(tagName);
         for (const el of elements) {
@@ -506,7 +589,6 @@ const findElement = (idCandidates, dataActionValue, textKeywords, tagName = 'but
     return null;
 };
 
-// Ensure element has the visual action-btn class
 const ensureActionBtnClass = (element) => {
     if (element && !element.classList.contains('action-btn')) {
         element.classList.add('action-btn');
@@ -514,23 +596,19 @@ const ensureActionBtnClass = (element) => {
     }
 };
 
-// Setup progress action buttons
 const setupProgressActions = (objectives, completedIds, completionDates, onUpdate) => {
-    // Find export button with multiple ID/selector/text strategies
     const btnExport = findElement(
         ['btn-export', 'export-btn', 'exportBtn', 'export-progress'],
         'export',
         ['exportar', 'export']
     );
 
-    // Find import button
     const btnImport = findElement(
         ['btn-import', 'import-btn', 'importBtn', 'import-progress'],
         'import',
         ['importar', 'import']
     );
 
-    // Find file input with multiple strategies
     let importFile = findElement(
         ['import-file', 'import-input', 'importFile', 'file-input'],
         'import-file',
@@ -538,7 +616,6 @@ const setupProgressActions = (objectives, completedIds, completionDates, onUpdat
         'input[type="file"]'
     );
 
-    // If file input doesn't exist, create it dynamically
     if (!importFile && btnImport) {
         importFile = document.createElement('input');
         importFile.type = 'file';
@@ -550,46 +627,42 @@ const setupProgressActions = (objectives, completedIds, completionDates, onUpdat
         console.info('Created hidden file input #import-file dynamically');
     }
 
-    // Find reset button
     const btnReset = findElement(
         ['btn-reset', 'reset-btn', 'resetBtn', 'reset-progress'],
         'reset',
         ['resetar', 'reset', 'limpar']
     );
 
-    // Find demo button
     const btnDemo = findElement(
         ['btn-demo', 'demo-btn', 'demoBtn', 'populate-demo', 'btn-populate'],
         'demo',
         ['demo', 'popular']
     );
 
-    // Log warnings for buttons not found
     if (!btnExport) {
-        console.warn('Export button not found. Tried IDs: btn-export, export-btn, exportBtn, export-progress; data-action="export"; text containing "exportar" or "export"');
+        console.warn('Export button not found.');
     } else {
         ensureActionBtnClass(btnExport);
     }
 
     if (!btnImport) {
-        console.warn('Import button not found. Tried IDs: btn-import, import-btn, importBtn, import-progress; data-action="import"; text containing "importar" or "import"');
+        console.warn('Import button not found.');
     } else {
         ensureActionBtnClass(btnImport);
     }
 
     if (!btnReset) {
-        console.warn('Reset button not found. Tried IDs: btn-reset, reset-btn, resetBtn, reset-progress; data-action="reset"; text containing "resetar", "reset", or "limpar"');
+        console.warn('Reset button not found.');
     } else {
         ensureActionBtnClass(btnReset);
     }
 
     if (!btnDemo) {
-        console.warn('Demo button not found. Tried IDs: btn-demo, demo-btn, demoBtn, populate-demo, btn-populate; data-action="demo"; text containing "demo" or "popular"');
+        console.warn('Demo button not found.');
     } else {
         ensureActionBtnClass(btnDemo);
     }
 
-    // Wire up event handlers
     if (btnExport) {
         btnExport.addEventListener('click', exportProgress);
     }
@@ -599,7 +672,7 @@ const setupProgressActions = (objectives, completedIds, completionDates, onUpdat
         importFile.addEventListener('change', (e) => {
             if (e.target.files && e.target.files[0]) {
                 importProgress(e.target.files[0], onUpdate);
-                e.target.value = ''; // Reset input
+                e.target.value = '';
             }
         });
     } else if (btnImport && !importFile) {
