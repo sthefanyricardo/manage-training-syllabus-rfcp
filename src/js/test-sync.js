@@ -69,6 +69,28 @@ const unitTests = [
     }
 ];
 
+// Headless runner for unit tests (returns serializable results)
+async function runUnitTestsHeadless() {
+    const results = [];
+    for (const t of unitTests) {
+        const entry = { name: t.name, passed: false, error: null };
+        try {
+            const res = t.test();
+            const final = (res && typeof res.then === 'function') ? await res : res;
+            entry.passed = !!final;
+        } catch (e) {
+            entry.passed = false;
+            entry.error = e && e.message ? e.message : String(e);
+        }
+        results.push(entry);
+    }
+    return results;
+}
+
+// Expose runner to other pages (sync-settings.html will call this)
+window.testRunner = window.testRunner || {};
+window.testRunner.runUnitTestsHeadless = runUnitTestsHeadless;
+
 const integrationTests = [
     {
     name: 'API: Testar conexão com GitHub',
@@ -105,31 +127,7 @@ const integrationTests = [
         const testData = {
         completedIds: ['TEST-1', 'TEST-2'],
         completionDates: { 'TEST-1': new Date().toISOString() }
-        };
-
-        // Headless runner for unit tests (returns serializable results)
-        async function runUnitTestsHeadless() {
-            const results = [];
-            for (const t of unitTests) {
-                const entry = { name: t.name, passed: false, error: null };
-                try {
-                    const res = t.test();
-                    // allow async tests (in case) — await if promise
-                    const final = (res && typeof res.then === 'function') ? await res : res;
-                    entry.passed = !!final;
-                } catch (e) {
-                    entry.passed = false;
-                    entry.error = e && e.message ? e.message : String(e);
-                }
-                results.push(entry);
-            }
-            return results;
-        }
-
-        // Expose runner to other pages (sync-settings.html will call this)
-        window.testRunner = window.testRunner || {};
-        window.testRunner.runUnitTestsHeadless = runUnitTestsHeadless;
-
+        };        
         
         await sm.saveRemoteProgress(testData);
         return true;
