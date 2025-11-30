@@ -566,25 +566,25 @@ const setupProgressActions = (objectives, completedIds, completionDates, onUpdat
 
     // Log warnings for buttons not found
     if (!btnExport) {
-        console.warn('Export button not found. Expected IDs: btn-export, export-btn');
+        console.warn('Export button not found. Tried IDs: btn-export, export-btn, exportBtn, export-progress; data-action="export"; text containing "exportar" or "export"');
     } else {
         ensureActionBtnClass(btnExport);
     }
 
     if (!btnImport) {
-        console.warn('Import button not found. Expected IDs: btn-import, import-btn');
+        console.warn('Import button not found. Tried IDs: btn-import, import-btn, importBtn, import-progress; data-action="import"; text containing "importar" or "import"');
     } else {
         ensureActionBtnClass(btnImport);
     }
 
     if (!btnReset) {
-        console.warn('Reset button not found. Expected IDs: btn-reset, reset-btn');
+        console.warn('Reset button not found. Tried IDs: btn-reset, reset-btn, resetBtn, reset-progress; data-action="reset"; text containing "resetar", "reset", or "limpar"');
     } else {
         ensureActionBtnClass(btnReset);
     }
 
     if (!btnDemo) {
-        console.warn('Demo button not found. Expected IDs: btn-demo, demo-btn');
+        console.warn('Demo button not found. Tried IDs: btn-demo, demo-btn, demoBtn, populate-demo, btn-populate; data-action="demo"; text containing "demo" or "popular"');
     } else {
         ensureActionBtnClass(btnDemo);
     }
