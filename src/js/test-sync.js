@@ -339,6 +339,7 @@ class TestManager {
     this.updateTokenFromUI();
     this.checkStoredToken();
     this.initUI();
+    this.setupTokenObserver();
   }
 
   /**
@@ -609,6 +610,25 @@ class TestManager {
     if (availableToken) {
       this.testToken = availableToken;
       console.log('🔑 Token capturado automaticamente da interface');
+    }
+  }
+
+  /**
+   * Configura observador do campo de token para captura automática
+   */
+  setupTokenObserver() {
+    // Observar mudanças no campo de token para atualização automática
+    const tokenInput = document.getElementById('github-token');
+    if (tokenInput) {
+      tokenInput.addEventListener('input', () => {
+        if (tokenInput.value.length > 20) {
+          this.updateTokenFromUI();
+          console.log('🔄 Token atualizado automaticamente para testes');
+        }
+      });
+      console.log('👁️ Observador de token configurado');
+    } else {
+      console.warn('⚠️ Campo github-token não encontrado para observação');
     }
   }
 
@@ -1003,6 +1023,9 @@ async function runUnitTestsHeadless() {
 document.addEventListener('DOMContentLoaded', () => {
   testManager = new TestManager();
   testManager.init();
+  
+  // Disponibilizar globalmente
+  window.testManager = testManager;
 });
 
 // Exportar para uso externo

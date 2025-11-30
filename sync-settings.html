@@ -197,21 +197,5 @@
   <script src="src/js/test-sync.js"></script>
   <script src="src/js/sync-manager-aux.js"></script>
   
-  <!-- Script para captura automática de token -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Observar mudanças no campo de token para atualização automática
-      const tokenInput = document.getElementById('github-token');
-      if (tokenInput) {
-        tokenInput.addEventListener('input', () => {
-          if (window.testManager && tokenInput.value.length > 20) {
-            window.testManager.updateTokenFromUI();
-            console.log('🔄 Token atualizado automaticamente para testes');
-          }
-        });
-      }
-    });
-  </script>
-  
 </body>
 </html>
