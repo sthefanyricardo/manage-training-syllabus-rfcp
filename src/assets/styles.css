@@ -54,12 +54,30 @@ body {
 header {
     text-align: center;
     margin-bottom: 2rem;
-    padding: 1rem;
+    padding: 2rem 1rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 header h1 {
-    color: #2c3e50;
+    color: #667eea;
     margin-bottom: 0.5rem;
+    font-size: 2rem;
+}
+
+header p {
+    color: #555;
+}
+
+header a {
+    color: #764ba2;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+header a:hover {
+    text-decoration: underline;
 }
 
 .preferences {
@@ -79,7 +97,7 @@ header h1 {
 }
 
 .progress {
-    background: #4CAF50;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     height: 100%;
     width: 0%;
     transition: width 0.3s ease;
@@ -136,8 +154,8 @@ header h1 {
 
 .search-input:focus {
     outline: none;
-    border-color: #4285F4;
-    box-shadow: 0 1px 8px rgba(66, 133, 244, 0.2);
+    border-color: #667eea;
+    box-shadow: 0 1px 8px rgba(102, 126, 234, 0.3);
 }
 
 .search-icon {
@@ -164,9 +182,10 @@ header h1 {
 }
 
 .filter-btn.active {
-    background: #2c3e50;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    border-color: #2c3e50;
+    border: none;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .objectives-list {
@@ -189,7 +208,8 @@ header h1 {
 }
 
 .objective-card.completed {
-    border-left: 4px solid #4CAF50;
+    border-left: 4px solid #667eea;
+    background: linear-gradient(to right, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.03));
 }
 
 .complete-button {
@@ -211,13 +231,13 @@ header h1 {
 }
 
 .complete-button:hover {
-    border-color: #4CAF50;
-    background: #f0f0f0;
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
 }
 
 .completed .complete-button {
-    background: #4CAF50;
-    border-color: #4CAF50;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
     color: white;
 }
 
@@ -249,7 +269,7 @@ header h1 {
 }
 
 .type-K1 { background: #e3f2fd; color: #1565c0; }
-.type-K2 { background: #f3e5f5; color: #7b1fa2; }
+.type-K2 { background: #e5fdec; color: #40c463; }
 .type-K3 { background: #fbe9e7; color: #d84315; }
 
 .objective-time {
@@ -266,21 +286,27 @@ header h1 {
 .objective-link {
     display: block;
     width: 100%;
-    color: #2196F3;
+    color: #667eea;
     text-decoration: none;
     font-size: 0.875rem;
     text-align: center;
     padding: 0.5rem;
-    border: 1px solid #2196F3;
+    border: 1px solid #667eea;
     border-radius: 4px;
     margin-bottom: 0.5rem;
+    transition: all 0.2s;
+}
+
+.objective-link:hover {
+    background: rgba(102, 126, 234, 0.1);
+    text-decoration: none;
 }
 
 .mark-complete-btn {
     display: block;
     width: 100%;
     padding: 0.5rem;
-    background: #4CAF50;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
     border-radius: 4px;
@@ -288,14 +314,21 @@ header h1 {
     cursor: pointer;
     text-decoration: none;
     text-align: center;
+    transition: all 0.3s;
 }
 
 .mark-complete-btn:hover {
-    background: #388E3C;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .completed .mark-complete-btn {
     background: #9E9E9E;
+    opacity: 0.7;
+}
+
+.completed .objective-name {
+    color: #666;
 }
 
 .objective-link:hover {
@@ -369,6 +402,31 @@ footer {
 .complete-button:focus,
 .mark-complete-btn:focus,
 .filter-btn:focus {
-    outline: 2px solid #4285F4;
+    outline: 2px solid #667eea;
     outline-offset: 2px;
+}
+
+.action-btn:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* Sync button */
+.sync-button {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.sync-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
