@@ -478,14 +478,118 @@ const populateDemo = (objectives, onUpdate) => {
     }
 };
 
+// Helper function to find element using multiple strategies
+const findElement = (idCandidates, dataActionValue, textKeywords, tagName = 'button') => {
+    // Strategy 1: Try multiple IDs
+    for (const id of idCandidates) {
+        const el = document.getElementById(id);
+        if (el) return el;
+    }
+
+    // Strategy 2: Try data-action attribute
+    if (dataActionValue) {
+        const el = document.querySelector(`[data-action="${dataActionValue}"]`);
+        if (el) return el;
+    }
+
+    // Strategy 3: Find by text content (case-insensitive)
+    if (textKeywords && textKeywords.length > 0) {
+        const elements = document.querySelectorAll(tagName);
+        for (const el of elements) {
+            const text = el.textContent.toLowerCase().trim();
+            if (textKeywords.some(keyword => text.includes(keyword.toLowerCase()))) {
+                return el;
+            }
+        }
+    }
+
+    return null;
+};
+
+// Ensure element has the visual action-btn class
+const ensureActionBtnClass = (element) => {
+    if (element && !element.classList.contains('action-btn')) {
+        element.classList.add('action-btn');
+        console.info('Added .action-btn class to element:', element);
+    }
+};
+
 // Setup progress action buttons
 const setupProgressActions = (objectives, completedIds, completionDates, onUpdate) => {
-    const btnExport = document.getElementById('btn-export');
-    const btnImport = document.getElementById('btn-import');
-    const importFile = document.getElementById('import-file');
-    const btnReset = document.getElementById('btn-reset');
-    const btnDemo = document.getElementById('btn-demo');
+    // Find export button with multiple ID/selector/text strategies
+    const btnExport = findElement(
+        ['btn-export', 'export-btn', 'exportBtn', 'export-progress'],
+        'export',
+        ['exportar', 'export']
+    );
 
+    // Find import button
+    const btnImport = findElement(
+        ['btn-import', 'import-btn', 'importBtn', 'import-progress'],
+        'import',
+        ['importar', 'import']
+    );
+
+    // Find file input with multiple strategies
+    let importFile = findElement(
+        ['import-file', 'import-input', 'importFile', 'file-input'],
+        'import-file',
+        null,
+        'input[type="file"]'
+    );
+
+    // If file input doesn't exist, create it dynamically
+    if (!importFile && btnImport) {
+        importFile = document.createElement('input');
+        importFile.type = 'file';
+        importFile.id = 'import-file';
+        importFile.accept = '.json';
+        importFile.hidden = true;
+        importFile.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(importFile);
+        console.info('Created hidden file input #import-file dynamically');
+    }
+
+    // Find reset button
+    const btnReset = findElement(
+        ['btn-reset', 'reset-btn', 'resetBtn', 'reset-progress'],
+        'reset',
+        ['resetar', 'reset', 'limpar']
+    );
+
+    // Find demo button
+    const btnDemo = findElement(
+        ['btn-demo', 'demo-btn', 'demoBtn', 'populate-demo', 'btn-populate'],
+        'demo',
+        ['demo', 'popular']
+    );
+
+    // Log warnings for buttons not found
+    if (!btnExport) {
+        console.warn('Export button not found. Expected IDs: btn-export, export-btn');
+    } else {
+        ensureActionBtnClass(btnExport);
+    }
+
+    if (!btnImport) {
+        console.warn('Import button not found. Expected IDs: btn-import, import-btn');
+    } else {
+        ensureActionBtnClass(btnImport);
+    }
+
+    if (!btnReset) {
+        console.warn('Reset button not found. Expected IDs: btn-reset, reset-btn');
+    } else {
+        ensureActionBtnClass(btnReset);
+    }
+
+    if (!btnDemo) {
+        console.warn('Demo button not found. Expected IDs: btn-demo, demo-btn');
+    } else {
+        ensureActionBtnClass(btnDemo);
+    }
+
+    // Wire up event handlers
     if (btnExport) {
         btnExport.addEventListener('click', exportProgress);
     }
