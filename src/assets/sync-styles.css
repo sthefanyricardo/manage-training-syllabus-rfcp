@@ -70,6 +70,14 @@ label {
     color: #2c3e50;
 }
 
+hr {
+    border: none;
+    height: 1px;
+    background: transparent;
+    margin: 10px 0;
+    opacity: 0.6;
+}
+
 input[type="text"],
 input[type="password"] {
     width: 100%;
