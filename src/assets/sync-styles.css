@@ -291,6 +291,13 @@ button:disabled {
     padding: 24px;
     margin-top: 28px;
 }
+.panel hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #c4c8d0, transparent);
+    margin: 20px 0;
+    opacity: 0.6;
+}
 .panel-header h2 {
     margin: 0 0 6px 0;
     font-size: 20px;
