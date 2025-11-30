@@ -106,6 +106,30 @@ const integrationTests = [
         completedIds: ['TEST-1', 'TEST-2'],
         completionDates: { 'TEST-1': new Date().toISOString() }
         };
+
+        // Headless runner for unit tests (returns serializable results)
+        async function runUnitTestsHeadless() {
+            const results = [];
+            for (const t of unitTests) {
+                const entry = { name: t.name, passed: false, error: null };
+                try {
+                    const res = t.test();
+                    // allow async tests (in case) — await if promise
+                    const final = (res && typeof res.then === 'function') ? await res : res;
+                    entry.passed = !!final;
+                } catch (e) {
+                    entry.passed = false;
+                    entry.error = e && e.message ? e.message : String(e);
+                }
+                results.push(entry);
+            }
+            return results;
+        }
+
+        // Expose runner to other pages (sync-settings.html will call this)
+        window.testRunner = window.testRunner || {};
+        window.testRunner.runUnitTestsHeadless = runUnitTestsHeadless;
+
         
         await sm.saveRemoteProgress(testData);
         return true;
@@ -352,3 +376,46 @@ if (localStorage.getItem('test_github_token')) {
 } else {
     log('⚠️ Nenhum token configurado. Configure um token para executar testes de integração.', 'warn');
 }
+
+// If opened with ?show=unit and there are stored unit test results,
+// render them and hide the token/controls to avoid redundant input.
+(function() {
+    function qs(name) {
+    return new URLSearchParams(window.location.search).get(name);
+    }
+
+    if (qs('show') === 'unit') {
+    const raw = localStorage.getItem('unit_test_results');
+    if (!raw) return;
+    try {
+        const results = JSON.parse(raw);
+        // wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', () => {
+        // hide token input and controls
+        const config = document.querySelector('.config-section');
+        if (config) config.style.display = 'none';
+        // render results into unit-tests container
+        const container = document.getElementById('unit-tests');
+        container.innerHTML = '';
+        let passed = 0;
+        let failed = 0;
+        results.forEach(r => {
+            const div = document.createElement('div');
+            div.className = 'test-case';
+            div.innerHTML = `<div class="test-name">${r.name}</div><span class="test-status ${r.passed? 'status-pass': 'status-fail'}">${r.passed? '✓ PASSOU':'✗ FALHOU'}</span>`;
+            if (r.error) div.innerHTML += `<div class="test-error">${r.error}</div>`;
+            container.appendChild(div);
+            if (r.passed) passed++; else failed++;
+        });
+
+        // update summary counters
+        document.getElementById('total-tests').textContent = results.length;
+        document.getElementById('passed-tests').textContent = passed;
+        document.getElementById('failed-tests').textContent = failed;
+        document.getElementById('pending-tests').textContent = 0;
+        });
+    } catch (e) {
+        console.warn('Failed to parse unit_test_results', e);
+    }
+    }
+})();
