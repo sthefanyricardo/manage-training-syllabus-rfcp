@@ -12,7 +12,9 @@
     <hr/>
 
     <h1>⚙️ Configuração de Sincronização</h1>
-    <p class="subtitle">Sincronize seu progresso entre dispositivos usando GitHub Gists</p>
+    <p class="subtitle">
+      Sincronize seu progresso entre dispositivos usando GitHub Gists
+    </p>
 
     <div id="status-badge"></div>
     <div id="alert-container"></div>
@@ -26,7 +28,12 @@
     <div class="instructions" id="instructions">
       <h3>📋 Como configurar:</h3>
       <ol>
-        <li>Acesse <a href="https://github.com/settings/tokens/new" target="_blank">GitHub Token Settings</a></li>
+        <li>
+          Acesse
+          <a href="https://github.com/settings/tokens/new" target="_blank">
+            GitHub Token Settings
+          </a>
+        </li>
         <li>Clique em "Generate new token (classic)"</li>
         <li>Dê um nome (ex: "RFCP Tracker")</li>
         <li>Selecione apenas o escopo <strong>"gist"</strong></li>
@@ -39,15 +46,17 @@
     <form id="sync-form">
       <div class="form-group">
         <label for="github-token">Token do GitHub</label>
-        <input 
-          type="password" 
-          id="github-token" 
+        <input
+          type="password"
+          id="github-token"
           placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
           autocomplete="off"
-        >
+        />
         <div class="help-text">
-          Token com permissão de "gist". 
-          <a href="https://github.com/settings/tokens/new" target="_blank">Criar token</a>
+          Token com permissão de "gist".
+          <a href="https://github.com/settings/tokens/new" target="_blank">
+            Criar token
+          </a>
         </div>
       </div>
 
@@ -58,7 +67,7 @@
         <button type="button" class="btn-secondary" id="test-btn">
           Testar Conexão
         </button>
-        <button type="button" class="btn-secondary" onclick="runAllTests()"> 
+        <button type="button" class="btn-secondary" onclick="runAllTests()">
           Executar Todos os Testes
         </button>
       </div>
@@ -129,11 +138,29 @@
       <!-- Controles -->
       <div class="controls" style="margin-top:12px;">
         <div class="button-group">
-          <button type="button" class="btn-secondary" onclick="runUnitTests()">🔎 Testes Unitários</button>
-          <button type="button" class="btn-secondary" onclick="runIntegrationTests()">🔄 Testes de Integração</button>
-          <button type="button" class="btn-secondary" onclick="runE2ETests()">🌐 Testes E2E</button>
-          <button type="button" class="btn-secondary" onclick="clearTestData()">🗑️ Limpar Dados de Teste</button>
-          <button type="button" class="btn-secondary" onclick="clearLogs()">🗑️ Limpar Log</button>
+          <button type="button" class="btn-secondary" onclick="runUnitTests()">
+            🔎 Testes Unitários
+          </button>
+          <button
+            type="button"
+            class="btn-secondary"
+            onclick="runIntegrationTests()"
+          >
+            🔄 Testes de Integração
+          </button>
+          <button type="button" class="btn-secondary" onclick="runE2ETests()">
+            🌐 Testes E2E
+          </button>
+          <button
+            type="button"
+            class="btn-secondary"
+            onclick="clearTestData()"
+          >
+            🗑️ Limpar Dados de Teste
+          </button>
+          <button type="button" class="btn-secondary" onclick="clearLogs()">
+            🗑️ Limpar Log
+          </button>
         </div>
       </div>
 
@@ -165,8 +192,10 @@
     <a href="index.html" class="back-link">← Voltar para o rastreador</a>
   </div>
 
+  <!-- Scripts refatorados -->
   <script src="src/js/sync-manager.js"></script>
   <script src="src/js/test-sync.js"></script>
   <script src="src/js/sync-manager-aux.js"></script>
+  
 </body>
 </html>

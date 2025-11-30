@@ -12,15 +12,29 @@
   
   <!-- Banner de erro para falhas no carregamento do JSON -->
   <div id="error-banner" class="error-banner" role="alert" hidden>
-    <span id="error-banner-message">Erro ao carregar objetivos data JSON — ver console / arquivo src/data/syllabus_rfcp.json</span>
-    <button id="error-banner-close" class="error-banner-close" aria-label="Fechar mensagem de erro">&times;</button>
+    <span id="error-banner-message">
+      Erro ao carregar objetivos data JSON — ver console / arquivo
+      src/data/syllabus_rfcp.json
+    </span>
+    <button
+      id="error-banner-close"
+      class="error-banner-close"
+      aria-label="Fechar mensagem de erro"
+    >
+      &times;
+    </button>
   </div>
 
   <header>
     <h1>Painel Acompanhamento de Estudos RFCP®</h1>
     <p>
-      Neste painel, acompanhe e compartilhe a sua jornada de aprendizado rumo à certificação
-      <a href="https://robotframework.org/robotframework-RFCP-syllabus/" target="_blank" rel="noopener">
+      Neste painel, acompanhe e compartilhe a sua jornada de aprendizado rumo à
+      certificação
+      <a
+        href="https://robotframework.org/robotframework-RFCP-syllabus/"
+        target="_blank"
+        rel="noopener"
+      >
         Robot Framework® Certified Professional (RFCP®)
       </a>
     </p>
@@ -68,11 +82,41 @@
 
       <!-- Botões de gerenciamento de progresso -->
       <div class="progress-actions">
-        <button id="btn-export" class="action-btn" aria-label="Exportar histórico de progresso como arquivo JSON">Exportar meu histórico</button>
-        <button id="btn-import" class="action-btn" aria-label="Carregar histórico de progresso de um arquivo JSON">Importar meu histórico</button>
-        <input type="file" id="import-file" accept=".json" hidden aria-hidden="true">
-        <button id="btn-reset" class="action-btn action-btn-danger" aria-label="Resetar todo o histórico de progresso atual">Recomeçar do zero</button>
-        <button id="btn-demo" class="action-btn action-btn-secondary" aria-label="Exemplo de histórico de progresso com dados de demonstração">Ver exemplo de preenchimento</button>
+        <button
+          id="btn-export"
+          class="action-btn"
+          aria-label="Exportar histórico de progresso como arquivo JSON"
+        >
+          Exportar meu histórico
+        </button>
+        <button
+          id="btn-import"
+          class="action-btn"
+          aria-label="Carregar histórico de progresso de um arquivo JSON"
+        >
+          Importar meu histórico
+        </button>
+        <input
+          type="file"
+          id="import-file"
+          accept=".json"
+          hidden
+          aria-hidden="true"
+        />
+        <button
+          id="btn-reset"
+          class="action-btn action-btn-danger"
+          aria-label="Resetar todo o histórico de progresso atual"
+        >
+          Recomeçar do zero
+        </button>
+        <button
+          id="btn-demo"
+          class="action-btn action-btn-secondary"
+          aria-label="Exemplo de histórico de progresso com dados de demonstração"
+        >
+          Ver exemplo de preenchimento
+        </button>
       </div>
     </div>
 
@@ -107,9 +151,23 @@
   <footer>
     <p>
       Bifurcação (fork) do projeto
-      <a href="https://github.com/sklarow/grind-rfcp" target="_blank" rel="noopener">grind-rfcp</a>
-      de <a href="https://www.linkedin.com/in/sklarow/" target="_blank" rel="noopener">Allan Sklarow</a>.
-      Licenciado sob a <a href="./LICENSE" target="_blank" rel="noopener">Licença MIT</a>.
+      <a
+        href="https://github.com/sklarow/grind-rfcp"
+        target="_blank"
+        rel="noopener"
+      >
+        grind-rfcp
+      </a>
+      de
+      <a
+        href="https://www.linkedin.com/in/sklarow/"
+        target="_blank"
+        rel="noopener"
+      >
+        Allan Sklarow
+      </a>
+      . Licenciado sob a
+      <a href="./LICENSE" target="_blank" rel="noopener">Licença MIT</a>.
     </p>
     <p>
       Este painel foi criado para acompanhar o meu progresso de estudos para a certificação
@@ -130,9 +188,10 @@
     </p>
   </footer>
 
+  <!-- Scripts refatorados -->
   <script src="src/js/sync-manager.js"></script>
   <script src="src/js/confetti.js"></script>
   <script src="src/js/main.js"></script>
-
+  
 </body>
 </html>
