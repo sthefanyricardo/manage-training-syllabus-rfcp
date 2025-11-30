@@ -32,21 +32,58 @@ class SyncManager {
 
     // Buscar gist existente ou criar novo
     async findOrCreateGist() {
-        // Primeiro, tentar buscar gist existente
-        const gists = await this.fetchGists();
-        const existingGist = gists.find(g => 
-            g.description === 'RFCP Study Tracker - Progress Data' &&
-            g.files['rfcp-progress.json']
-        );
+        // Ensure a single gist exists for this app/user. This will validate stored gistId,
+        // search existing gists by description and only create a new one if none found.
+        await this.ensureGistExists();
+        return this.gistId;
+    }
 
-        if (existingGist) {
-            this.gistId = existingGist.id;
-            localStorage.setItem('rfcp_gist_id', this.gistId);
-            console.log('Gist existente encontrado:', this.gistId);
-            return this.gistId;
+    // Ensure a single gist exists: validate stored id, search user's gists, or create one.
+    async ensureGistExists() {
+        // If we have a stored gistId, verify it first
+        if (this.gistId) {
+            try {
+                const resp = await fetch(`https://api.github.com/gists/${this.gistId}`, {
+                    headers: {
+                        'Authorization': `token ${this.token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (resp.ok) {
+                    // gistId is valid
+                    localStorage.setItem('rfcp_gist_id', this.gistId);
+                    console.log('Gist armazenado válido:', this.gistId);
+                    return this.gistId;
+                }
+            } catch (err) {
+                console.warn('Falha ao verificar gist armazenado:', err);
+            }
+
+            // Invalidate stored id and continue
+            this.gistId = null;
+            localStorage.removeItem('rfcp_gist_id');
         }
 
-        // Se não encontrar, criar novo
+        // Search user's gists for one matching our description
+        try {
+            const gists = await this.fetchGists();
+            const existingGist = gists.find(g =>
+                g.description === 'RFCP Study Tracker - Progress Data' &&
+                g.files && g.files['rfcp-progress.json']
+            );
+
+            if (existingGist) {
+                this.gistId = existingGist.id;
+                localStorage.setItem('rfcp_gist_id', this.gistId);
+                console.log('Gist existente encontrado via busca:', this.gistId);
+                return this.gistId;
+            }
+        } catch (err) {
+            console.warn('Busca por gists existentes falhou:', err);
+        }
+
+        // No existing gist found — create one and use it
         const newGist = await this.createGist();
         this.gistId = newGist.id;
         localStorage.setItem('rfcp_gist_id', this.gistId);
@@ -79,6 +116,22 @@ class SyncManager {
             completionDates: {},
             lastModified: new Date().toISOString()
         };
+        // Double-check there's not already a gist (race condition avoidance)
+        try {
+            const gists = await this.fetchGists();
+            const existingGist = gists.find(g =>
+                g.description === 'RFCP Study Tracker - Progress Data' &&
+                g.files && g.files['rfcp-progress.json']
+            );
+
+            if (existingGist) {
+                console.log('createGist: encontrado gist existente, retornando ele em vez de criar novo:', existingGist.id);
+                return existingGist;
+            }
+        } catch (err) {
+            // ignore and proceed to create
+            console.warn('createGist: não foi possível listar gists, prosseguindo para criar:', err);
+        }
 
         const response = await fetch('https://api.github.com/gists', {
             method: 'POST',
@@ -138,11 +191,14 @@ class SyncManager {
 
     // Buscar progresso remoto
     async fetchRemoteProgress() {
+        // Ensure we have a valid gist id first (will create/find one if necessary)
         if (!this.gistId) {
-            throw new Error('Gist ID não configurado');
+            await this.ensureGistExists();
+            if (!this.gistId) throw new Error('Gist ID não configurado');
         }
 
-        const response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
+        // Try to fetch the gist; if not found, try to recover by ensuring gist exists and retry once
+        let response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
             headers: {
                 'Authorization': `token ${this.token}`,
                 'Accept': 'application/vnd.github.v3+json'
@@ -151,20 +207,22 @@ class SyncManager {
 
         if (!response.ok) {
             const body = await response.text().catch(() => '');
-            console.error('fetchRemoteProgress failed:', response.status, body);
+            console.warn('fetchRemoteProgress failed:', response.status, body);
 
-            // If gist not found, try to recreate it and return fresh initial data
             if (response.status === 404) {
-                console.warn('Gist not found (404). Creating a new gist and returning initial data.');
-                const newGist = await this.createGist();
-                this.gistId = newGist.id;
-                localStorage.setItem('rfcp_gist_id', this.gistId);
-                const content = newGist.files && newGist.files['rfcp-progress.json']
-                    ? newGist.files['rfcp-progress.json'].content
-                    : JSON.stringify({ completedIds: [], completionDates: {}, lastModified: new Date().toISOString() });
-                return JSON.parse(content);
+                // ensureGistExists will try to find an existing gist or create one if truly missing
+                await this.ensureGistExists();
+                response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
+                    headers: {
+                        'Authorization': `token ${this.token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
             }
+        }
 
+        if (!response.ok) {
+            const body = await response.text().catch(() => '');
             throw new Error(`Erro ao buscar progresso remoto: ${response.status} ${body}`);
         }
 
@@ -199,18 +257,37 @@ class SyncManager {
                 }
             })
         });
-
         if (!response.ok) {
             const body = await response.text().catch(() => '');
-            console.error('saveRemoteProgress failed:', response.status, body);
+            console.warn('saveRemoteProgress failed:', response.status, body);
 
-            // If update is rejected with Conflict, try to create a fresh gist and continue
-            if (response.status === 409) {
-                console.warn('PATCH to gist returned 409 Conflict. Creating a new gist as fallback.');
-                const newGist = await this.createGist();
-                this.gistId = newGist.id;
-                localStorage.setItem('rfcp_gist_id', this.gistId);
-                return newGist;
+            if (response.status === 404 || response.status === 409) {
+                // Attempt to recover by ensuring a single gist exists, then retry once
+                await this.ensureGistExists();
+
+                const retryResp = await fetch(`https://api.github.com/gists/${this.gistId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `token ${this.token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        files: {
+                            'rfcp-progress.json': {
+                                content: JSON.stringify(dataWithTimestamp, null, 2)
+                            }
+                        }
+                    })
+                });
+
+                if (!retryResp.ok) {
+                    const retryBody = await retryResp.text().catch(() => '');
+                    console.error('saveRemoteProgress retry failed:', retryResp.status, retryBody);
+                    throw new Error(`Erro ao salvar progresso remoto (retry): ${retryResp.status} ${retryBody}`);
+                }
+
+                return await retryResp.json();
             }
 
             throw new Error(`Erro ao salvar progresso remoto: ${response.status} ${body}`);
