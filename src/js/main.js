@@ -478,143 +478,118 @@ const populateDemo = (objectives, onUpdate) => {
     }
 };
 
-/**
- * Finds an element using multiple strategies for robustness across different HTML versions.
- * Tries IDs first, then data-action attribute, then class + text content.
- * @param {Object} options - Search options
- * @param {string[]} options.ids - Array of possible IDs to search
- * @param {string} options.dataAction - Value for data-action attribute fallback
- * @param {string[]} options.textMatches - Array of text patterns to match in button text (case-insensitive)
- * @param {string} options.elementType - Element type for logging (e.g., 'export', 'import')
- * @returns {HTMLElement|null} - Found element or null
- */
-const findElement = ({ ids = [], dataAction = '', textMatches = [], elementType = 'unknown' }) => {
-    // Strategy 1: Try all possible IDs
-    for (const id of ids) {
+// Helper function to find element using multiple strategies
+const findElement = (idCandidates, dataActionValue, textKeywords, tagName = 'button') => {
+    // Strategy 1: Try multiple IDs
+    for (const id of idCandidates) {
         const el = document.getElementById(id);
-        if (el) {
-            return el;
-        }
+        if (el) return el;
     }
 
     // Strategy 2: Try data-action attribute
-    if (dataAction) {
-        const el = document.querySelector(`[data-action="${dataAction}"]`);
-        if (el) {
-            return el;
-        }
+    if (dataActionValue) {
+        const el = document.querySelector(`[data-action="${dataActionValue}"]`);
+        if (el) return el;
     }
 
-    // Strategy 3: Try finding by class and text content
-    if (textMatches.length > 0) {
-        const buttons = document.querySelectorAll('button.action-btn');
-        for (const btn of buttons) {
-            const btnText = btn.textContent.toLowerCase().trim();
-            for (const textMatch of textMatches) {
-                if (btnText.includes(textMatch.toLowerCase())) {
-                    return btn;
-                }
+    // Strategy 3: Find by text content (case-insensitive)
+    if (textKeywords && textKeywords.length > 0) {
+        const elements = document.querySelectorAll(tagName);
+        for (const el of elements) {
+            const text = el.textContent.toLowerCase().trim();
+            if (textKeywords.some(keyword => text.includes(keyword.toLowerCase()))) {
+                return el;
             }
         }
     }
 
-    // Log warning if element not found
-    console.warn(
-        `[RFCP] Elemento "${elementType}" não encontrado. ` +
-        `Verifique se o HTML contém um dos seguintes IDs: ${ids.join(', ')} ` +
-        `ou data-action="${dataAction}" ou um botão com classe "action-btn" contendo texto: ${textMatches.join(', ')}`
-    );
     return null;
 };
 
-/**
- * Finds the file input element for import, or creates one dynamically if not found.
- * @param {HTMLElement} importButton - The import button element to attach the input to
- * @returns {HTMLInputElement|null} - The file input element or null
- */
-const findOrCreateFileInput = (importButton) => {
-    // Strategy 1: Try known IDs
-    const knownIds = ['import-file', 'import-input', 'file-input', 'btn-import-file'];
-    for (const id of knownIds) {
-        const el = document.getElementById(id);
-        if (el) {
-            return el;
-        }
+// Ensure element has the visual action-btn class
+const ensureActionBtnClass = (element) => {
+    if (element && !element.classList.contains('action-btn')) {
+        element.classList.add('action-btn');
+        console.info('Added .action-btn class to element:', element);
     }
-
-    // Strategy 2: Try data-action
-    let el = document.querySelector('[data-action="import-file"]');
-    if (el) {
-        return el;
-    }
-
-    // Strategy 3: Try finding input[type="file"] near the import button
-    el = document.querySelector('input[type="file"][accept=".json"]');
-    if (el) {
-        return el;
-    }
-
-    // Strategy 4: Create a dynamic hidden input element
-    if (importButton) {
-        console.warn(
-            '[RFCP] Input de arquivo para importação não encontrado. ' +
-            'Criando input dinâmico. Verifique se o HTML contém um input com ID: ' +
-            knownIds.join(', ')
-        );
-        const dynamicInput = document.createElement('input');
-        dynamicInput.type = 'file';
-        dynamicInput.accept = '.json';
-        dynamicInput.hidden = true;
-        dynamicInput.setAttribute('aria-hidden', 'true');
-        dynamicInput.id = 'import-file-dynamic';
-        importButton.parentNode.insertBefore(dynamicInput, importButton.nextSibling);
-        return dynamicInput;
-    }
-
-    console.warn(
-        '[RFCP] Input de arquivo para importação não encontrado e não foi possível criar dinamicamente. ' +
-        'Verifique o HTML.'
-    );
-    return null;
 };
 
 // Setup progress action buttons
 const setupProgressActions = (objectives, completedIds, completionDates, onUpdate) => {
-    // Find export button with fallbacks
-    const btnExport = findElement({
-        ids: ['btn-export', 'export-btn', 'exportBtn', 'export-progress'],
-        dataAction: 'export',
-        textMatches: ['export', 'exportar'],
-        elementType: 'botão de exportar'
-    });
+    // Find export button with multiple ID/selector/text strategies
+    const btnExport = findElement(
+        ['btn-export', 'export-btn', 'exportBtn', 'export-progress'],
+        'export',
+        ['exportar', 'export']
+    );
 
-    // Find import button with fallbacks
-    const btnImport = findElement({
-        ids: ['btn-import', 'import-btn', 'importBtn', 'import-progress'],
-        dataAction: 'import',
-        textMatches: ['import', 'importar'],
-        elementType: 'botão de importar'
-    });
+    // Find import button
+    const btnImport = findElement(
+        ['btn-import', 'import-btn', 'importBtn', 'import-progress'],
+        'import',
+        ['importar', 'import']
+    );
 
-    // Find or create file input for import
-    const importFile = findOrCreateFileInput(btnImport);
+    // Find file input with multiple strategies
+    let importFile = findElement(
+        ['import-file', 'import-input', 'importFile', 'file-input'],
+        'import-file',
+        null,
+        'input[type="file"]'
+    );
 
-    // Find reset button with fallbacks
-    const btnReset = findElement({
-        ids: ['btn-reset', 'reset-btn', 'resetBtn', 'reset-progress'],
-        dataAction: 'reset',
-        textMatches: ['reset', 'resetar', 'limpar'],
-        elementType: 'botão de resetar'
-    });
+    // If file input doesn't exist, create it dynamically
+    if (!importFile && btnImport) {
+        importFile = document.createElement('input');
+        importFile.type = 'file';
+        importFile.id = 'import-file';
+        importFile.accept = '.json';
+        importFile.hidden = true;
+        importFile.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(importFile);
+        console.info('Created hidden file input #import-file dynamically');
+    }
 
-    // Find demo/seed button with fallbacks
-    const btnDemo = findElement({
-        ids: ['btn-demo', 'demo-btn', 'demoBtn', 'seed-btn', 'populate-demo', 'populate-btn'],
-        dataAction: 'demo',
-        textMatches: ['demo', 'popular', 'seed'],
-        elementType: 'botão de popular demo'
-    });
+    // Find reset button
+    const btnReset = findElement(
+        ['btn-reset', 'reset-btn', 'resetBtn', 'reset-progress'],
+        'reset',
+        ['resetar', 'reset', 'limpar']
+    );
 
+    // Find demo button
+    const btnDemo = findElement(
+        ['btn-demo', 'demo-btn', 'demoBtn', 'populate-demo', 'btn-populate'],
+        'demo',
+        ['demo', 'popular']
+    );
+
+    // Log warnings for buttons not found
+    if (!btnExport) {
+        console.warn('Export button not found. Tried IDs: btn-export, export-btn, exportBtn, export-progress; data-action="export"; text containing "exportar" or "export"');
+    } else {
+        ensureActionBtnClass(btnExport);
+    }
+
+    if (!btnImport) {
+        console.warn('Import button not found. Tried IDs: btn-import, import-btn, importBtn, import-progress; data-action="import"; text containing "importar" or "import"');
+    } else {
+        ensureActionBtnClass(btnImport);
+    }
+
+    if (!btnReset) {
+        console.warn('Reset button not found. Tried IDs: btn-reset, reset-btn, resetBtn, reset-progress; data-action="reset"; text containing "resetar", "reset", or "limpar"');
+    } else {
+        ensureActionBtnClass(btnReset);
+    }
+
+    if (!btnDemo) {
+        console.warn('Demo button not found. Tried IDs: btn-demo, demo-btn, demoBtn, populate-demo, btn-populate; data-action="demo"; text containing "demo" or "popular"');
+    } else {
+        ensureActionBtnClass(btnDemo);
+    }
+
+    // Wire up event handlers
     if (btnExport) {
         btnExport.addEventListener('click', exportProgress);
     }
