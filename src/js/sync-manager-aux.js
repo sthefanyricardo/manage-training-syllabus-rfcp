@@ -11,40 +11,72 @@ const instructions = document.getElementById('instructions');
 // Wire the Run Unit Tests button to the headless runner.
 document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('run-unit-tests-btn');
-    const linkContainer = document.createElement('div');
-    linkContainer.id = 'unit-test-results-link';
-    linkContainer.style.marginTop = '12px';
-    btn.parentElement.appendChild(linkContainer);
-
+    // If the in-page test UI exists, wire the inline controls to the test functions.
+    const testsSection = document.getElementById('tests-section');
     btn.addEventListener('click', async () => {
     btn.disabled = true;
-    btn.textContent = 'Executando...';
+    const originalText = btn.textContent;
+    btn.textContent = 'Executando testes...';
     try {
-        if (!window.testRunner || !window.testRunner.runUnitTestsHeadless) {
-        alert('Runner de testes não está disponível. Certifique-se de que src/js/test-sync.js foi carregado.');
-        return;
-        }
-        const results = await window.testRunner.runUnitTestsHeadless();
-        // store results for the test page to read
-        localStorage.setItem('unit_test_results', JSON.stringify(results));
+        // reveal the embedded tests UI if present
+        if (testsSection) testsSection.style.display = 'block';
 
-        // create link to test-sync.html that will show only the results
-        const a = document.createElement('a');
-        a.href = 'test-sync.html?show=unit';
-        a.textContent = 'Ver resultados dos unit tests';
-        a.className = 'btn-primary';
-        a.style.marginLeft = '8px';
-        linkContainer.innerHTML = '';
-        linkContainer.appendChild(a);
-        btn.textContent = 'Executar Unit Tests';
+        // Prefer UI runner functions if available
+        if (typeof runAllTests === 'function') {
+        await runAllTests();
+        } else if (window.testRunner && window.testRunner.runUnitTestsHeadless) {
+        // fallback to headless unit tests only
+        const results = await window.testRunner.runUnitTestsHeadless();
+        localStorage.setItem('unit_test_results', JSON.stringify(results));
+        alert('Unit tests executed (headless). Results saved to localStorage.');
+        } else {
+        alert('Runner de testes não está disponível. Certifique-se de que src/js/test-sync.js foi carregado.');
+        }
     } catch (e) {
-        console.error('Erro ao executar unit tests', e);
-        alert('Erro ao executar unit tests: ' + (e.message || e));
-        btn.textContent = 'Executar Unit Tests';
+        console.error('Erro ao executar testes', e);
+        alert('Erro ao executar testes: ' + (e.message || e));
     } finally {
         btn.disabled = false;
+        btn.textContent = originalText;
     }
     });
+
+    // If the embedded controls exist, wire them to the test functions (UI mode)
+    const runAllInline = document.getElementById('run-all-tests-inline');
+    if (runAllInline) runAllInline.addEventListener('click', async () => {
+        runAllInline.disabled = true;
+        runAllInline.textContent = 'Executando...';
+        try { if (typeof runAllTests === 'function') await runAllTests(); }
+        catch (e) { console.error(e); alert('Erro: '+e.message); }
+        finally { runAllInline.disabled = false; runAllInline.textContent = '▶️ Executar Todos'; }
+    });
+
+    const runUnitInline = document.getElementById('run-unit-tests-inline');
+    if (runUnitInline) runUnitInline.addEventListener('click', async () => {
+        runUnitInline.disabled = true;
+        try { if (typeof runUnitTests === 'function') await runUnitTests(); }
+        catch (e) { console.error(e); alert('Erro: '+e.message); }
+        finally { runUnitInline.disabled = false; }
+    });
+
+    const runIntInline = document.getElementById('run-integration-tests-inline');
+    if (runIntInline) runIntInline.addEventListener('click', async () => {
+        runIntInline.disabled = true;
+        try { if (typeof runIntegrationTests === 'function') await runIntegrationTests(); }
+        catch (e) { console.error(e); alert('Erro: '+e.message); }
+        finally { runIntInline.disabled = false; }
+    });
+
+    const runE2EInline = document.getElementById('run-e2e-tests-inline');
+    if (runE2EInline) runE2EInline.addEventListener('click', async () => {
+        runE2EInline.disabled = true;
+        try { if (typeof runE2ETests === 'function') await runE2ETests(); }
+        catch (e) { console.error(e); alert('Erro: '+e.message); }
+        finally { runE2EInline.disabled = false; }
+    });
+
+    const clearLogInline = document.getElementById('clear-log-inline');
+    if (clearLogInline) clearLogInline.addEventListener('click', () => { clearLogs(); });
 });
   
 // Mostrar alert
