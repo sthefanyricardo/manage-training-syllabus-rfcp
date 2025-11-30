@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Configuração de Sincronização - RFCP Tracker</title>
   <link rel="stylesheet" href="src/assets/sync-styles.css" />
+  <link rel="stylesheet" href="src/assets/test-sync-styless.css" />
 </head>
 <body>
   <div class="container">
@@ -93,72 +94,71 @@
     </div>
     
     <!-- === Test Runner UI (embutido) === -->
-    <div id="tests-section" style="display: none; margin-top: 24px;">
-      <h2>🧪 Suite de Testes - In-page</h2>
+    <h1>🧪 Suite de Testes - Sincronização RFCP</h1>
+    <p class="subtitle">Validação completa do sistema de sincronização</p>
 
-      <!-- Configuração de Teste -->
-      <div class="config-section">
-        <h3>⚙️ Configuração de Teste</h3>
-        <input type="password" id="test-token" placeholder="Cole seu token do GitHub para testes">
-        <button type="button" onclick="saveTestToken()">Salvar Token</button>
-        <button type="button" onclick="clearTestData()">Limpar Dados de Teste</button>
-      </div>
+    <!-- Configuração -->
+    <div class="config-section">
+      <h3>⚙️ Configuração de Teste</h3>
+      <input type="password" id="test-token" placeholder="Cole seu token do GitHub para testes">
+      <button onclick="saveTestToken()">Salvar Token</button>
+      <button onclick="clearTestData()">Limpar Dados de Teste</button>
+    </div>
 
-      <!-- Resumo -->
-      <div class="summary" id="summary" style="margin-top: 12px;">
-        <h3>📊 Resumo dos Testes</h3>
-        <div class="summary-stats">
-          <div class="stat">
-            <div class="stat-value" id="total-tests">0</div>
-            <div class="stat-label">Total</div>
-          </div>
-          <div class="stat">
-            <div class="stat-value" id="passed-tests">0</div>
-            <div class="stat-label">Passou</div>
-          </div>
-          <div class="stat">
-            <div class="stat-value" id="failed-tests">0</div>
-            <div class="stat-label">Falhou</div>
-          </div>
-          <div class="stat">
-            <div class="stat-value" id="pending-tests">0</div>
-            <div class="stat-label">Pendente</div>
-          </div>
+    <!-- Resumo -->
+    <div class="summary" id="summary">
+      <h2>📊 Resumo dos Testes</h2>
+      <div class="summary-stats">
+        <div class="stat">
+          <div class="stat-value" style="color: #d4d4d4;" id="total-tests">0</div>
+          <div class="stat-label">Total</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" style="color: #4ec9b0;" id="passed-tests">0</div>
+          <div class="stat-label">Passou</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" style="color: #f48771;" id="failed-tests">0</div>
+          <div class="stat-label">Falhou</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" style="color: #3c3c3c;" id="pending-tests">0</div>
+          <div class="stat-label">Pendente</div>
         </div>
       </div>
+    </div>
 
-      <!-- Controles -->
-      <div class="controls" style="margin-top:12px;">
-        <button type="button" id="run-all-tests-inline">▶️ Executar Todos</button>
-        <button type="button" id="run-unit-tests-inline">🧩 Testes Unitários</button>
-        <button type="button" id="run-integration-tests-inline">🔗 Testes de Integração</button>
-        <button type="button" id="run-e2e-tests-inline">🎭 Testes E2E</button>
-        <button type="button" id="clear-log-inline">🗑️ Limpar Log</button>
-      </div>
+    <!-- Controles -->
+    <div class="controls">
+      <button onclick="runAllTests()">▶️ Executar Todos</button>
+      <button onclick="runUnitTests()">🧩 Testes Unitários</button>
+      <button onclick="runIntegrationTests()">🔗 Testes de Integração</button>
+      <button onclick="runE2ETests()">🎭 Testes E2E</button>
+      <button onclick="clearLogs()">🗑️ Limpar Log</button>
+    </div>
 
-      <!-- Log -->
-      <div class="test-section" style="margin-top:12px;">
-        <h3>📝 Log de Execução</h3>
-        <div class="log" id="test-log"></div>
-      </div>
+    <!-- Log -->
+    <div class="test-section">
+      <h2>📝 Log de Execução</h2>
+      <div class="log" id="test-log"></div>
+    </div>
 
-      <!-- Testes Unitários -->
-      <div class="test-section" style="margin-top:12px;">
-        <h3>🧩 Testes Unitários</h3>
-        <div id="unit-tests"></div>
-      </div>
+    <!-- Testes Unitários -->
+    <div class="test-section">
+      <h2>🧩 Testes Unitários</h2>
+      <div id="unit-tests"></div>
+    </div>
 
-      <!-- Testes de Integração -->
-      <div class="test-section" style="margin-top:12px;">
-        <h3>🔗 Testes de Integração</h3>
-        <div id="integration-tests"></div>
-      </div>
+    <!-- Testes de Integração -->
+    <div class="test-section">
+      <h2>🔗 Testes de Integração</h2>
+      <div id="integration-tests"></div>
+    </div>
 
-      <!-- Testes E2E -->
-      <div class="test-section" style="margin-top:12px;">
-        <h3>🎭 Testes End-to-End</h3>
-        <div id="e2e-tests"></div>
-      </div>
+    <!-- Testes E2E -->
+    <div class="test-section">
+      <h2>🎭 Testes End-to-End</h2>
+      <div id="e2e-tests"></div>
     </div>
 
     <a href="index.html" class="back-link">← Voltar para o rastreador</a>

@@ -4,18 +4,6 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: 'Monaco', 'Courier New', monospace;
-    background: #1e1e1e;
-    color: #d4d4d4;
-    padding: 20px;
-    line-height: 1.6;
-}
-
-.container {
-    max-width: 1000px;
-    margin: 0 auto;
-}
 
 h1 {
     color: #4ec9b0;
