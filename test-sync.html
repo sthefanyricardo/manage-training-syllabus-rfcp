@@ -11,6 +11,14 @@
     <h1>🧪 Suite de Testes - Sincronização RFCP</h1>
     <p class="subtitle">Validação completa do sistema de sincronização</p>
 
+    <!-- Configuração -->
+    <div class="config-section">
+      <h3>⚙️ Configuração de Teste</h3>
+      <input type="password" id="test-token" placeholder="Cole seu token do GitHub para testes">
+      <button onclick="saveTestToken()">Salvar Token</button>
+      <button onclick="clearTestData()">Limpar Dados de Teste</button>
+    </div>
+
     <!-- Resumo -->
     <div class="summary" id="summary">
       <h2>📊 Resumo dos Testes</h2>
@@ -36,7 +44,10 @@
 
     <!-- Controles -->
     <div class="controls">
-      <button onclick="clearTestData()">Limpar Dados de Teste</button>
+      <button onclick="runAllTests()">▶️ Executar Todos</button>
+      <button onclick="runUnitTests()">🧩 Testes Unitários</button>
+      <button onclick="runIntegrationTests()">🔗 Testes de Integração</button>
+      <button onclick="runE2ETests()">🎭 Testes E2E</button>
       <button onclick="clearLogs()">🗑️ Limpar Log</button>
     </div>
 
