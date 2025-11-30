@@ -1,4 +1,6 @@
-let testToken = localStorage.getItem('test_github_token');
+// Do not auto-load a token from localStorage on page load — require the user
+// to explicitly save/enter a token so tests don't run with an unexpected token.
+let testToken = null;
 let testResults = {
     total: 0,
     passed: 0,
@@ -214,9 +216,9 @@ function log(message, type = 'info') {
 function saveTestToken() {
     const token = document.getElementById('test-token').value;
     if (token) {
-    testToken = token;
-    localStorage.setItem('test_github_token', token);
-    log('✓ Token salvo com sucesso', 'info');
+        testToken = token;
+        localStorage.setItem('test_github_token', token);
+        log('✓ Token salvo com sucesso (será usado pelos testes de integração)', 'info');
     } else {
     log('✗ Token não pode ser vazio', 'error');
     }
@@ -343,9 +345,10 @@ async function runE2ETests() {
 // Inicializar
 initTests();
 
-if (testToken) {
-    document.getElementById('test-token').value = '••••••••••••••••••••';
-    log('✓ Token de teste carregado do localStorage', 'info');
+// Do not auto-populate or auto-use any saved token. Inform the user that a
+// token can be saved for integration tests.
+if (localStorage.getItem('test_github_token')) {
+    log('⚠️ Um token do GitHub foi detectado no localStorage, mas não é carregado automaticamente. Cole-o e clique em "Salvar Token" para usar nos testes de integração.', 'warn');
 } else {
     log('⚠️ Nenhum token configurado. Configure um token para executar testes de integração.', 'warn');
 }
