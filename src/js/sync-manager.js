@@ -213,7 +213,17 @@ class SyncManager {
         }
 
         const json = await response.json();
+        // Persist the created gist id so subsequent calls reuse the same gist
+        try {
+            if (json && json.id) {
+                this.gistId = json.id;
+                try { localStorage.setItem('rfcp_gist_id', this.gistId); } catch (e) {}
+            }
+        } catch (e) {
+            // ignore persistence errors
+        }
         this._clearRateLimit();
+        console.log('createGist: gist criado com id', this.gistId || (json && json.id));
         return json;
     }
 
