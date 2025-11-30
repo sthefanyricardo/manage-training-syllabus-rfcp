@@ -1,8 +1,3 @@
-.subtitle {
-    color: #808080;
-    margin-bottom: 30px;
-}
-
 .test-section {
     border-left: 4px solid #007acc;
     padding: 20px;
@@ -38,22 +33,18 @@
 }
 
 .status-pending {
-    background: #3c3c3c;
     color: #d4d4d4;
 }
 
 .status-running {
-    background: #007acc;
     color: white;
 }
 
 .status-pass {
-    background: #4ec9b0;
     color: #1e1e1e;
 }
 
 .status-fail {
-    background: #f48771;
     color: #1e1e1e;
 }
 
@@ -64,35 +55,11 @@
 }
 
 .test-error {
-    background: #5a1d1d;
     border-left: 3px solid #f48771;
     padding: 10px;
     margin-top: 8px;
     font-size: 13px;
     color: #f48771;
-}
-
-button {
-    background: #0e639c;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    margin-right: 10px;
-    margin-bottom: 10px;
-}
-
-button:hover {
-    background: #1177bb;
-}
-
-button:disabled {
-    background: #3c3c3c;
-    color: #808080;
-    cursor: not-allowed;
 }
 
 .controls {
@@ -146,7 +113,6 @@ button:disabled {
 }
 
 input {
-    background: #3c3c3c;
     color: #d4d4d4;
     border: 1px solid #6c6c6c;
     padding: 8px 12px;
@@ -157,7 +123,6 @@ input {
 }
 
 .log {
-    background: #1e1e1e;
     border: 1px solid #3c3c3c;
     padding: 15px;
     border-radius: 4px;
