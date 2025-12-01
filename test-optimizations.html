@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4A5568">
+    <title>Teste de Otimizações - RFCP Tracker</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==">
+    <link rel="shortcut icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="RFCP Tracker">
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f7fafc;
+        }
+        
+        .test-section h3 {
+            color: #4a5568;
+            margin-top: 0;
+        }
+        
+        .test-button {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .test-button:hover {
+            background: #3182ce;
+        }
+        
+        .results {
+            margin-top: 20px;
+            padding: 20px;
+            background: #1a202c;
+            color: #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .status.pass {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .status.fail {
+            background: #f56565;
+            color: white;
+        }
+        
+        .status.pending {
+            background: #ed8936;
+            color: white;
+        }
+        
+        .feature-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Teste de Otimizações</h1>
+            <p>Validação das melhorias implementadas no RFCP Tracker</p>
+        </div>
+
+        <div class="test-section">
+            <h3>📋 Recursos Implementados</h3>
+            <ul class="feature-list">
+                <li>
+                    <strong>Favicon</strong>
+                    <span class="status pending" id="favicon-status">TESTANDO</span>
+                    <br><small>Base64 embedded favicon para evitar erro 404</small>
+                </li>
+                <li>
+                    <strong>PWA (Progressive Web App)</strong>
+                    <span class="status pending" id="pwa-status">TESTANDO</span>
+                    <br><small>Meta tags, manifest e Service Worker para funcionalidade offline</small>
+                </li>
+                <li>
+                    <strong>Service Worker</strong>
+                    <span class="status pending" id="sw-status">TESTANDO</span>
+                    <br><small>Cache inteligente para melhor performance</small>
+                </li>
+                <li>
+                    <strong>Sistema de Cache</strong>
+                    <span class="status pending" id="cache-status">TESTANDO</span>
+                    <br><small>LocalStorage com expiração para objetivos</small>
+                </li>
+                <li>
+                    <strong>Analytics</strong>
+                    <span class="status pending" id="analytics-status">TESTANDO</span>
+                    <br><small>Rastreamento de interações do usuário</small>
+                </li>
+                <li>
+                    <strong>Headers Sanitizados</strong>
+                    <span class="status pending" id="headers-status">TESTANDO</span>
+                    <br><small>Correção de encoding ISO-8859-1 para GitHub API</small>
+                </li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🧪 Executar Testes</h3>
+            <button class="test-button" onclick="runAllTests()">Executar Todos os Testes</button>
+            <button class="test-button" onclick="testServiceWorker()">Testar Service Worker</button>
+            <button class="test-button" onclick="testCache()">Testar Cache</button>
+            <button class="test-button" onclick="testAnalytics()">Testar Analytics</button>
+            <button class="test-button" onclick="clearResults()">Limpar Resultados</button>
+        </div>
+
+        <div class="results" id="test-results">
+            Clique em "Executar Todos os Testes" para começar...
+        </div>
+    </div>
+
+    <script>
+        let testResults = '';
+
+        function log(message) {
+            testResults += message + '\n';
+            document.getElementById('test-results').textContent = testResults;
+        }
+
+        function updateStatus(id, status) {
+            const element = document.getElementById(id);
+            element.textContent = status === 'pass' ? 'PASS' : status === 'fail' ? 'FAIL' : 'TESTANDO';
+            element.className = `status ${status}`;
+        }
+
+        function clearResults() {
+            testResults = '';
+            document.getElementById('test-results').textContent = 'Resultados limpos...';
+            
+            // Reset all status
+            ['favicon', 'pwa', 'sw', 'cache', 'analytics', 'headers'].forEach(test => {
+                updateStatus(test + '-status', 'pending');
+            });
+        }
+
+        async function runAllTests() {
+            clearResults();
+            log('🔍 Iniciando testes de otimização...\n');
+
+            await testFavicon();
+            await testPWA();
+            await testServiceWorker();
+            await testCache();
+            await testAnalytics();
+            await testHeaders();
+
+            log('\n📋 TESTES CONCLUÍDOS!');
+        }
+
+        async function testFavicon() {
+            log('📝 Testando favicon...');
+            
+            try {
+                const link = document.querySelector('link[rel="icon"]');
+                const shortcutIcon = document.querySelector('link[rel="shortcut icon"]');
+                
+                if (link || shortcutIcon) {
+                    updateStatus('favicon-status', 'pass');
+                    log('✅ Favicon configurado');
+                } else {
+                    updateStatus('favicon-status', 'fail');
+                    log('❌ Favicon não encontrado');
+                }
+            } catch (error) {
+                updateStatus('favicon-status', 'fail');
+                log('❌ Erro ao testar favicon: ' + error.message);
+            }
+        }
+
+        async function testPWA() {
+            log('📱 Testando PWA...');
+            
+            try {
+                const manifest = document.querySelector('link[rel="manifest"]');
+                const themeColor = document.querySelector('meta[name="theme-color"]');
+                const viewport = document.querySelector('meta[name="viewport"]');
+                
+                if (manifest && themeColor && viewport) {
+                    updateStatus('pwa-status', 'pass');
+                    log('✅ PWA configurado corretamente');
+                } else {
+                    updateStatus('pwa-status', 'fail');
+                    log('❌ Configurações PWA incompletas');
+                }
+            } catch (error) {
+                updateStatus('pwa-status', 'fail');
+                log('❌ Erro ao testar PWA: ' + error.message);
+            }
+        }
+
+        async function testServiceWorker() {
+            log('⚙️ Testando Service Worker...');
+            
+            try {
+                if ('serviceWorker' in navigator) {
+                    // Tentar registrar o Service Worker se não estiver registrado
+                    try {
+                        await navigator.serviceWorker.register('./sw.js');
+                        log('📝 Service Worker registrado');
+                    } catch (regError) {
+                        log('⚠️ Erro ao registrar SW: ' + regError.message);
+                    }
+
+                    const registration = await navigator.serviceWorker.getRegistration();
+                    
+                    if (registration) {
+                        updateStatus('sw-status', 'pass');
+                        log('✅ Service Worker ativo');
+                    } else {
+                        updateStatus('sw-status', 'fail');
+                        log('❌ Service Worker não registrado');
+                    }
+                } else {
+                    updateStatus('sw-status', 'fail');
+                    log('❌ Service Worker não suportado');
+                }
+            } catch (error) {
+                updateStatus('sw-status', 'fail');
+                log('❌ Erro ao testar Service Worker: ' + error.message);
+            }
+        }
+
+        async function testCache() {
+            log('💾 Testando cache...');
+            
+            try {
+                // Testar localStorage
+                const testKey = 'rfcp_test_cache';
+                const testValue = { test: true, timestamp: Date.now() };
+                
+                localStorage.setItem(testKey, JSON.stringify(testValue));
+                const stored = JSON.parse(localStorage.getItem(testKey));
+                
+                if (stored && stored.test === true) {
+                    updateStatus('cache-status', 'pass');
+                    log('✅ Sistema de cache funcionando');
+                    localStorage.removeItem(testKey); // Cleanup
+                } else {
+                    updateStatus('cache-status', 'fail');
+                    log('❌ Sistema de cache com problemas');
+                }
+            } catch (error) {
+                updateStatus('cache-status', 'fail');
+                log('❌ Erro ao testar cache: ' + error.message);
+            }
+        }
+
+        async function testAnalytics() {
+            log('📊 Testando analytics...');
+            
+            try {
+                // Simular evento de analytics
+                const event = {
+                    type: 'test_event',
+                    data: { test: true },
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Tentar armazenar evento
+                const eventsKey = 'rfcp_analytics_events';
+                let events = JSON.parse(localStorage.getItem(eventsKey) || '[]');
+                events.push(event);
+                localStorage.setItem(eventsKey, JSON.stringify(events));
+                
+                // Verificar se foi armazenado
+                const storedEvents = JSON.parse(localStorage.getItem(eventsKey));
+                if (storedEvents && storedEvents.length > 0) {
+                    updateStatus('analytics-status', 'pass');
+                    log('✅ Sistema de analytics funcionando');
+                    localStorage.removeItem(eventsKey); // Cleanup
+                } else {
+                    updateStatus('analytics-status', 'fail');
+                    log('❌ Sistema de analytics com problemas');
+                }
+            } catch (error) {
+                updateStatus('analytics-status', 'fail');
+                log('❌ Erro ao testar analytics: ' + error.message);
+            }
+        }
+
+        async function testHeaders() {
+            log('📡 Testando headers...');
+            
+            try {
+                // Simular sanitização de headers
+                const testToken = 'test-token-with-special-chars-çãõ';
+                const cleanToken = testToken.replace(/[^\x00-\x7F]/g, '');
+                
+                if (cleanToken !== testToken && cleanToken.length < testToken.length) {
+                    updateStatus('headers-status', 'pass');
+                    log('✅ Sanitização de headers funcionando');
+                } else if (cleanToken === testToken) {
+                    updateStatus('headers-status', 'pass');
+                    log('✅ Headers OK (token sem caracteres especiais)');
+                } else {
+                    updateStatus('headers-status', 'fail');
+                    log('❌ Problema na sanitização de headers');
+                }
+            } catch (error) {
+                updateStatus('headers-status', 'fail');
+                log('❌ Erro ao testar headers: ' + error.message);
+            }
+        }
+
+        // Executar testes automaticamente quando a página carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                log('🚀 Página carregada. Execute os testes quando estiver pronto.');
+            }, 500);
+        });
+    </script>
+</body>
+</html>

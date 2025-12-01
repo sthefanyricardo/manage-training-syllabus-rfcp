@@ -543,8 +543,9 @@ class SyncManagerUI {
     try {
       const response = await fetch('https://api.github.com/user', {
         headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3+json'
+          'Authorization': `Bearer ${token}`.replace(/[^\x00-\x7F]/g, ''),
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'RFCP-Tracker/1.0'
         }
       });
 

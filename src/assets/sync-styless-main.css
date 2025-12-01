@@ -1,14 +1,18 @@
-/* src/assets/sync-styles.css */
+/* 
+ * ARQUIVO DEPRECIADO - CONTEÚDO CONSOLIDADO EM sync-styles.css
+ * Este arquivo será removido na próxima versão
+ * Mantenha apenas sync-styles.css para evitar duplicação
+ */
 
-/* Sync status indicator */
+/* Sync status indicator - MOVIDO PARA sync-styles.css */
 .sync-status {
     display: inline-block;
     margin-left: 15px;
     padding: 4px 10px;
-    border-radius: 12px;
+    border-radius: var(--radius-lg, 12px);
     font-size: 12px;
     font-weight: 600;
-    transition: all 0.3s;
+    transition: all var(--transition-slow, 0.3s);
 }
 
 .sync-status.success {

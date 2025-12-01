@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Sincronização GitHub</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+        .btn { padding: 10px 15px; margin: 5px; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .results { background: #f8f9fa; padding: 15px; border-radius: 4px; margin-top: 10px; font-family: monospace; }
+        .status { font-weight: bold; }
+        .pass { color: #28a745; }
+        .fail { color: #dc3545; }
+        .info { color: #007bff; }
+    </style>
+</head>
+<body>
+    <h1>🔄 Teste de Sincronização GitHub</h1>
+    
+    <div class="test-section">
+        <h3>1. Configurar Token (Obrigatório)</h3>
+        <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxxxxxx" style="width: 300px;">
+        <button class="btn btn-primary" onclick="testConnection()">Testar Conexão</button>
+        <div class="results" id="connection-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. Testar Operações de Sync</h3>
+        <button class="btn btn-success" onclick="testCreateGist()">Criar Gist</button>
+        <button class="btn btn-success" onclick="testSaveData()">Salvar Dados</button>
+        <button class="btn btn-success" onclick="testLoadData()">Carregar Dados</button>
+        <button class="btn btn-danger" onclick="testCleanup()">Limpar Teste</button>
+        <div class="results" id="sync-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. Status da Sincronização</h3>
+        <button class="btn btn-primary" onclick="checkSyncStatus()">Verificar Status</button>
+        <div class="results" id="status-result"></div>
+    </div>
+
+    <script>
+        let testSyncManager = null;
+        let testToken = '';
+
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'pass' ? 'pass' : type === 'fail' ? 'fail' : 'info';
+            element.innerHTML += `<div class="status ${className}">[${timestamp}] ${message}</div>`;
+        }
+
+        function clearLog(elementId) {
+            document.getElementById(elementId).innerHTML = '';
+        }
+
+        async function testConnection() {
+            clearLog('connection-result');
+            const token = document.getElementById('github-token').value.trim();
+            
+            if (!token) {
+                log('connection-result', '❌ Token não pode estar vazio', 'fail');
+                return;
+            }
+
+            testToken = token;
+            
+            try {
+                log('connection-result', '🔍 Testando conexão com GitHub...', 'info');
+                
+                const response = await fetch('https://api.github.com/user', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`.replace(/[^\x00-\x7F]/g, ''),
+                        'Accept': 'application/vnd.github.v3+json',
+                        'User-Agent': 'RFCP-Tracker/1.0'
+                    }
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    log('connection-result', `✅ Conectado como: ${user.login}`, 'pass');
+                    log('connection-result', `📊 Rate limit remaining: ${response.headers.get('x-ratelimit-remaining')}`, 'info');
+                    
+                    // Inicializar SyncManager para testes
+                    testSyncManager = new window.SyncManager();
+                    await testSyncManager.setupSync(token);
+                    log('connection-result', '✅ SyncManager inicializado', 'pass');
+                } else {
+                    log('connection-result', `❌ Erro ${response.status}: Token inválido`, 'fail');
+                }
+            } catch (error) {
+                log('connection-result', `❌ Erro de conexão: ${error.message}`, 'fail');
+            }
+        }
+
+        async function testCreateGist() {
+            clearLog('sync-result');
+            
+            if (!testSyncManager) {
+                log('sync-result', '❌ Configure o token primeiro', 'fail');
+                return;
+            }
+
+            try {
+                log('sync-result', '🔄 Criando/Localizando Gist...', 'info');
+                await testSyncManager.ensureGistExists();
+                
+                if (testSyncManager.gistId) {
+                    log('sync-result', `✅ Gist disponível: ${testSyncManager.gistId}`, 'pass');
+                } else {
+                    log('sync-result', '❌ Falha ao criar/localizar Gist', 'fail');
+                }
+            } catch (error) {
+                log('sync-result', `❌ Erro: ${error.message}`, 'fail');
+            }
+        }
+
+        async function testSaveData() {
+            if (!testSyncManager || !testSyncManager.gistId) {
+                log('sync-result', '❌ Crie o Gist primeiro', 'fail');
+                return;
+            }
+
+            try {
+                log('sync-result', '💾 Salvando dados de teste...', 'info');
+                
+                const testData = {
+                    completedIds: ['TEST-1', 'TEST-2', 'TEST-3'],
+                    completionDates: {
+                        'TEST-1': new Date().toISOString(),
+                        'TEST-2': new Date(Date.now() - 86400000).toISOString(), // 1 dia atrás
+                        'TEST-3': new Date(Date.now() - 172800000).toISOString()  // 2 dias atrás
+                    }
+                };
+
+                await testSyncManager.saveRemoteProgress(testData);
+                log('sync-result', '✅ Dados salvos no GitHub', 'pass');
+                log('sync-result', `📝 Objetivos salvos: ${testData.completedIds.length}`, 'info');
+            } catch (error) {
+                log('sync-result', `❌ Erro ao salvar: ${error.message}`, 'fail');
+            }
+        }
+
+        async function testLoadData() {
+            if (!testSyncManager || !testSyncManager.gistId) {
+                log('sync-result', '❌ Crie o Gist primeiro', 'fail');
+                return;
+            }
+
+            try {
+                log('sync-result', '📥 Carregando dados do GitHub...', 'info');
+                
+                const data = await testSyncManager.fetchRemoteProgress();
+                log('sync-result', '✅ Dados carregados com sucesso', 'pass');
+                log('sync-result', `📊 Objetivos: ${data.completedIds?.length || 0}`, 'info');
+                log('sync-result', `🕐 Última modificação: ${data.lastModified || 'N/A'}`, 'info');
+                
+                if (data.completedIds?.includes('TEST-1')) {
+                    log('sync-result', '✅ Dados de teste encontrados', 'pass');
+                }
+            } catch (error) {
+                log('sync-result', `❌ Erro ao carregar: ${error.message}`, 'fail');
+            }
+        }
+
+        async function testCleanup() {
+            if (!testSyncManager || !testToken) {
+                log('sync-result', '❌ Nada para limpar', 'fail');
+                return;
+            }
+
+            try {
+                log('sync-result', '🗑️ Limpando dados de teste...', 'info');
+                
+                // Salvar dados vazios
+                await testSyncManager.saveRemoteProgress({
+                    completedIds: [],
+                    completionDates: {}
+                });
+                
+                log('sync-result', '✅ Dados de teste removidos', 'pass');
+            } catch (error) {
+                log('sync-result', `❌ Erro na limpeza: ${error.message}`, 'fail');
+            }
+        }
+
+        async function checkSyncStatus() {
+            clearLog('status-result');
+            
+            if (!testSyncManager) {
+                log('status-result', '❌ Configure o token primeiro', 'fail');
+                return;
+            }
+
+            try {
+                const status = testSyncManager.getStatus();
+                
+                log('status-result', '📊 STATUS DA SINCRONIZAÇÃO:', 'info');
+                log('status-result', `Habilitada: ${status.enabled ? '✅ Sim' : '❌ Não'}`, status.enabled ? 'pass' : 'fail');
+                log('status-result', `Gist ID: ${status.gistId || 'N/A'}`, 'info');
+                log('status-result', `Última Sync: ${status.lastSync || 'N/A'}`, 'info');
+                log('status-result', `Em Progresso: ${status.inProgress ? 'Sim' : 'Não'}`, 'info');
+                
+                if (status.rateLimitedUntil) {
+                    log('status-result', `⚠️ Rate limited até: ${status.rateLimitedUntil}`, 'fail');
+                } else {
+                    log('status-result', '✅ Rate limit OK', 'pass');
+                }
+                
+            } catch (error) {
+                log('status-result', `❌ Erro: ${error.message}`, 'fail');
+            }
+        }
+    </script>
+
+    <!-- Carregar SyncManager -->
+    <script src="src/js/sync-manager.js"></script>
+</body>
+</html>

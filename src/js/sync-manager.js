@@ -34,13 +34,28 @@ class HttpClient {
    * @returns {Promise<Response>}
    */
   static async request(url, options = {}) {
+    // Garantir headers com encoding correto
+    const headers = {
+      'Accept': 'application/vnd.github.v3+json',
+      'User-Agent': 'RFCP-Tracker/1.0',
+      'Content-Type': 'application/json; charset=utf-8',
+      ...options.headers
+    };
+
+    // Sanitizar headers para evitar caracteres não ISO-8859-1
+    const sanitizedHeaders = {};
+    Object.entries(headers).forEach(([key, value]) => {
+      if (typeof value === 'string') {
+        // Remover caracteres não ASCII e garantir encoding correto
+        sanitizedHeaders[key] = value.replace(/[^\x00-\x7F]/g, '');
+      } else {
+        sanitizedHeaders[key] = value;
+      }
+    });
+
     const response = await fetch(url, {
       ...options,
-      headers: {
-        'Accept': 'application/vnd.github.v3+json',
-        'User-Agent': 'RFCP-Tracker/1.0',
-        ...options.headers
-      }
+      headers: sanitizedHeaders
     });
 
     return response;

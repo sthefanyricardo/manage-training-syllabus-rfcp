@@ -453,7 +453,11 @@ class TestManager {
           const token = window.getAvailableTestToken?.() || this.testToken;
           if (!token) throw new Error('Token não configurado - insira no campo "Token do GitHub"');
           const response = await fetch('https://api.github.com/user', {
-            headers: { 'Authorization': `token ${token}` }
+            headers: { 
+              'Authorization': `Bearer ${token}`.replace(/[^\x00-\x7F]/g, ''),
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'RFCP-Tracker/1.0'
+            }
           });
           return response.ok;
         }
@@ -583,7 +587,11 @@ class TestManager {
             // Deletar Gist de teste
             const response = await fetch(`https://api.github.com/gists/${gistId}`, {
               method: 'DELETE',
-              headers: { 'Authorization': `token ${this.testToken}` }
+              headers: { 
+                'Authorization': `Bearer ${this.testToken}`.replace(/[^\x00-\x7F]/g, ''),
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'RFCP-Tracker/1.0'
+              }
             });
             
             localStorage.removeItem(TEST_CONFIG.STORAGE_KEYS.TEST_GIST_ID);

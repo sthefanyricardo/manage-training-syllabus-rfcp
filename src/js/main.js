@@ -21,7 +21,20 @@ const CONFIG = {
   CONTRIBUTION_GRID_DAYS: 30,
   CONFETTI_PARTICLES: 50,
   ALERT_TIMEOUT: 5000,
-  STATUS_TIMEOUT: 3000
+  STATUS_TIMEOUT: 3000,
+  // Novas configurações
+  CACHE_KEY: 'rfcp_objectives_cache',
+  CACHE_EXPIRY: 24 * 60 * 60 * 1000, // 24 horas
+  ANALYTICS_KEY: 'rfcp_analytics',
+  SERVICE_WORKER_URL: './sw.js',
+  // Eventos para analytics
+  ANALYTICS_EVENTS: {
+    OBJECTIVE_COMPLETED: 'objective_completed',
+    OBJECTIVE_UNCOMPLETED: 'objective_uncompleted',
+    SEARCH_PERFORMED: 'search_performed',
+    FILTER_APPLIED: 'filter_applied',
+    PAGE_LOADED: 'page_loaded'
+  }
 };
 
 /**
@@ -39,6 +52,71 @@ class Utils {
       if (element) return element;
     }
     return null;
+  }
+
+  /**
+   * Salva analytics de eventos de uso
+   * @param {string} event - Nome do evento
+   * @param {Object} data - Dados do evento
+   */
+  static trackEvent(event, data = {}) {
+    try {
+      const analytics = JSON.parse(localStorage.getItem(CONFIG.ANALYTICS_KEY) || '[]');
+      analytics.push({
+        event,
+        data,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent.substring(0, 100)
+      });
+      
+      // Manter apenas os últimos 100 eventos
+      if (analytics.length > 100) {
+        analytics.splice(0, analytics.length - 100);
+      }
+      
+      localStorage.setItem(CONFIG.ANALYTICS_KEY, JSON.stringify(analytics));
+    } catch (error) {
+      console.warn('Erro ao salvar analytics:', error);
+    }
+  }
+
+  /**
+   * Gerencia cache local para objetivos
+   */
+  static getCachedObjectives() {
+    try {
+      const cached = localStorage.getItem(CONFIG.CACHE_KEY);
+      if (!cached) return null;
+      
+      const data = JSON.parse(cached);
+      const now = Date.now();
+      
+      if (now - data.timestamp > CONFIG.CACHE_EXPIRY) {
+        localStorage.removeItem(CONFIG.CACHE_KEY);
+        return null;
+      }
+      
+      return data.objectives;
+    } catch (error) {
+      console.warn('Erro ao ler cache:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Salva objetivos no cache local
+   * @param {Array} objectives - Lista de objetivos
+   */
+  static setCachedObjectives(objectives) {
+    try {
+      const data = {
+        objectives,
+        timestamp: Date.now()
+      };
+      localStorage.setItem(CONFIG.CACHE_KEY, JSON.stringify(data));
+    } catch (error) {
+      console.warn('Erro ao salvar cache:', error);
+    }
   }
 
   /**
@@ -399,12 +477,22 @@ class RFCPTracker {
   }
 
   /**
-   * Carrega os objetivos do arquivo JSON
+   * Carrega os objetivos do arquivo JSON com cache
    * @returns {Promise<Array>} Lista de objetivos carregados
    * @throws {Error} Erro ao carregar arquivo JSON
    */
   async loadObjectives() {
     try {
+      // Tentar carregar do cache primeiro
+      let cachedObjectives = Utils.getCachedObjectives();
+      
+      if (cachedObjectives) {
+        this.objectives = cachedObjectives;
+        console.log(`📦 ${this.objectives.length} objetivos carregados do cache`);
+        return this.objectives;
+      }
+      
+      // Se não há cache, carregar da rede
       const response = await fetch(CONFIG.DATA_FILE);
       if (!response.ok) {
         throw new Error(`Erro HTTP: ${response.status}`);
@@ -424,10 +512,22 @@ class RFCPTracker {
       this.loadError = false;
       this.hideErrorBanner();
       
-      console.log(`✅ ${this.objectives.length} objetivos carregados com sucesso`);
+      // Salvar no cache para próximas consultas
+      Utils.setCachedObjectives(this.objectives);
+      
+      console.log(`✅ ${this.objectives.length} objetivos carregados da rede e salvos no cache`);
       return this.objectives;
     } catch (error) {
       console.error('❌ Erro ao carregar objetivos:', error);
+      
+      // Tentar cache como fallback
+      const cached = Utils.getCachedObjectives();
+      if (cached) {
+        this.objectives = cached;
+        console.log('🔄 Usando cache como fallback');
+        return this.objectives;
+      }
+      
       this.loadError = true;
       this.showErrorBanner();
       this.notificationManager.show('Erro ao carregar objetivos', 'error');
@@ -544,6 +644,10 @@ class RFCPTracker {
         this.elements.filterButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         this.currentFilter = btn.dataset.filter;
+        
+        // Track filter analytics
+        Utils.trackEvent('filter_used', { filter: this.currentFilter });
+        
         this.render();
       });
     });
@@ -556,6 +660,12 @@ class RFCPTracker {
     if (this.elements.searchInput) {
       const debouncedSearch = Utils.debounce((term) => {
         this.currentSearch = term;
+        
+        // Track search analytics
+        if (term.trim()) {
+          Utils.trackEvent('search_performed', { query_length: term.length });
+        }
+        
         this.render();
       }, 300);
 
@@ -592,6 +702,12 @@ class RFCPTracker {
       this.completedIds.push(objectiveId);
       this.completionDates[objectiveId] = new Date().toISOString();
       
+      // Track completion analytics
+      Utils.trackEvent('objective_completed', { 
+        objective_id: objectiveId,
+        total_completed: this.completedIds.length
+      });
+      
       // Trigger confetti animation
       if (window.confetti) {
         window.confetti.burst(event.clientX, event.clientY);
@@ -601,6 +717,12 @@ class RFCPTracker {
     } else {
       this.completedIds.splice(index, 1);
       delete this.completionDates[objectiveId];
+      
+      // Track uncomplete analytics
+      Utils.trackEvent('objective_uncompleted', { 
+        objective_id: objectiveId,
+        total_completed: this.completedIds.length
+      });
     }
 
     await this.saveProgress();
@@ -965,10 +1087,46 @@ class RFCPTracker {
  */
 let rfcpTracker;
 
+/**
+ * Registra o Service Worker para PWA
+ */
+async function registerServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    try {
+      const registration = await navigator.serviceWorker.register(CONFIG.SERVICE_WORKER_URL);
+      console.log('✅ Service Worker registrado:', registration);
+    } catch (error) {
+      console.log('ℹ️ Service Worker não disponível (normal em desenvolvimento):', error.message);
+    }
+  }
+}
+
+/**
+ * Inicializa sistema de analytics
+ */
+function initializeAnalytics() {
+  // Rastrear carregamento da página
+  Utils.trackEvent(CONFIG.ANALYTICS_EVENTS.PAGE_LOADED, {
+    url: window.location.pathname,
+    timestamp: new Date().toISOString()
+  });
+  
+  console.log('📊 Analytics inicializado');
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   try {
+    // Registrar Service Worker
+    await registerServiceWorker();
+    
+    // Inicializar analytics
+    initializeAnalytics();
+    
+    // Inicializar aplicação principal
     rfcpTracker = new RFCPTracker();
     await rfcpTracker.init();
+    
+    console.log('🚀 Aplicação totalmente inicializada com PWA');
   } catch (error) {
     console.error('❌ Erro crítico na inicialização:', error);
   }
