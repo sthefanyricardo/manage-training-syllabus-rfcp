@@ -1,475 +1,665 @@
-// src/js/sync-manager.js
-// GitHub Gist Sync Manager para RFCP Tracker
+/**
+ * GitHub Gist Sync Manager para RFCP Tracker
+ * Gerencia a sincronização de dados entre dispositivos usando GitHub Gists
+ * @fileoverview Sistema de sincronização via GitHub Gists  
+ * @author Sthefany Ricardo
+ * @version 2.0.0
+ */
 
-class SyncManager {
-    constructor() {
-        this.gistId = localStorage.getItem('rfcp_gist_id');
-        this.token = localStorage.getItem('rfcp_github_token');
-        this.syncEnabled = !!this.token;
-        this.lastSync = null;
-        this.syncInProgress = false;
-        // Load persisted rate-limit state (ISO string) if present
-        const storedReset = localStorage.getItem('rfcp_rate_limited_until');
-        this._rateLimitedUntil = storedReset ? new Date(storedReset) : null; // cache reset time when rate-limited
+'use strict';
+
+/**
+ * Configurações do SyncManager
+ */
+const SYNC_CONFIG = {
+  API_BASE_URL: 'https://api.github.com',
+  GIST_FILENAME: 'rfcp-progress.json',
+  GIST_DESCRIPTION: 'RFCP Study Tracker - Progress Data',
+  STORAGE_KEYS: {
+    GIST_ID: 'rfcp_gist_id',
+    TOKEN: 'rfcp_github_token',
+    RATE_LIMITED_UNTIL: 'rfcp_rate_limited_until'
+  },
+  RATE_LIMIT_BUFFER: 60000 // 1 minute buffer
+};
+
+/**
+ * Utilitários para requisições HTTP
+ */
+class HttpClient {
+  /**
+   * Faz uma requisição HTTP
+   * @param {string} url - URL da requisição
+   * @param {Object} options - Opções da requisição
+   * @returns {Promise<Response>}
+   */
+  static async request(url, options = {}) {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'RFCP-Tracker/1.0',
+        ...options.headers
+      }
+    });
+
+    return response;
+  }
+
+  /**
+   * Faz uma requisição autenticada para a API do GitHub
+   * @param {string} endpoint - Endpoint da API
+   * @param {string} token - Token de autenticação
+   * @param {Object} options - Opções da requisição
+   * @returns {Promise<Object>}
+   */
+  static async githubRequest(endpoint, token, options = {}) {
+    const url = `${SYNC_CONFIG.API_BASE_URL}${endpoint}`;
+    
+    const response = await this.request(url, {
+      ...options,
+      headers: {
+        'Authorization': `token ${token}`,
+        ...options.headers
+      }
+    });
+
+    return { response, data: response.ok ? await response.json() : null };
+  }
+}
+
+/**
+ * Gerenciador de rate limits da API do GitHub
+ */
+class RateLimitManager {
+  constructor() {
+    this.resetTime = this.loadStoredReset();
+  }
+
+  /**
+   * Carrega o tempo de reset do rate limit do localStorage
+   * @returns {Date|null}
+   */
+  loadStoredReset() {
+    const stored = localStorage.getItem(SYNC_CONFIG.STORAGE_KEYS.RATE_LIMITED_UNTIL);
+    return stored ? new Date(stored) : null;
+  }
+
+  /**
+   * Verifica se está em rate limit
+   * @returns {boolean}
+   */
+  isRateLimited() {
+    if (!this.resetTime) return false;
+    return new Date() < this.resetTime;
+  }
+
+  /**
+   * Define o rate limit baseado na resposta da API
+   * @param {Response} response - Resposta da API
+   */
+  handleRateLimit(response) {
+    const resetHeader = response.headers.get('X-RateLimit-Reset');
+    const remaining = parseInt(response.headers.get('X-RateLimit-Remaining') || '0');
+
+    if (response.status === 403 && remaining === 0 && resetHeader) {
+      const resetTime = new Date(parseInt(resetHeader) * 1000);
+      // Adicionar buffer para evitar requests prematuros
+      resetTime.setTime(resetTime.getTime() + SYNC_CONFIG.RATE_LIMIT_BUFFER);
+      
+      this.setRateLimit(resetTime);
+      console.warn(`⚠️ Rate limit atingido. Reset em: ${resetTime.toLocaleString()}`);
+    }
+  }
+
+  /**
+   * Define um rate limit
+   * @param {Date} resetTime - Tempo para reset
+   */
+  setRateLimit(resetTime) {
+    this.resetTime = resetTime;
+    try {
+      localStorage.setItem(SYNC_CONFIG.STORAGE_KEYS.RATE_LIMITED_UNTIL, resetTime.toISOString());
+    } catch (error) {
+      console.warn('Erro ao persistir rate limit:', error);
+    }
+  }
+
+  /**
+   * Limpa o rate limit
+   */
+  clearRateLimit() {
+    this.resetTime = null;
+    try {
+      localStorage.removeItem(SYNC_CONFIG.STORAGE_KEYS.RATE_LIMITED_UNTIL);
+    } catch (error) {
+      console.warn('Erro ao limpar rate limit:', error);
+    }
+  }
+
+  /**
+   * Retorna informações do rate limit
+   * @returns {Object}
+   */
+  getStatus() {
+    return {
+      isLimited: this.isRateLimited(),
+      resetTime: this.resetTime
+    };
+  }
+}
+
+/**
+ * Gerenciador de Gists
+ */
+class GistManager {
+  constructor(token, rateLimitManager) {
+    this.token = token;
+    this.rateLimitManager = rateLimitManager;
+    this.gistId = localStorage.getItem(SYNC_CONFIG.STORAGE_KEYS.GIST_ID);
+  }
+
+  /**
+   * Busca todos os gists do usuário
+   * @returns {Promise<Array>}
+   */
+  async fetchUserGists() {
+    if (this.rateLimitManager.isRateLimited()) {
+      throw new Error('Rate limit ativo. Tente novamente mais tarde.');
     }
 
-    // Parse rate-limit info from a response (returns { isRateLimit, resetDate })
-    _parseRateLimitInfo(response, bodyText) {
-        try {
-            const body = bodyText ? JSON.parse(bodyText) : null;
-            const msg = body && body.message ? String(body.message) : '';
-            const isRateLimit = /rate limit/i.test(msg) || response.status === 429 || response.status === 403 && /rate limit/i.test(msg);
-            const resetHeader = response.headers && (response.headers.get ? response.headers.get('x-ratelimit-reset') : null);
-            let resetDate = null;
-            if (resetHeader) {
-                const seconds = Number(resetHeader);
-                if (!Number.isNaN(seconds)) resetDate = new Date(seconds * 1000);
-            }
-            return { isRateLimit, resetDate };
-        } catch (e) {
-            return { isRateLimit: false, resetDate: null };
-        }
+    const { response, data } = await HttpClient.githubRequest('/gists', this.token);
+    
+    this.rateLimitManager.handleRateLimit(response);
+
+    if (!response.ok) {
+      throw new Error(`Erro ao buscar gists: ${response.status} ${response.statusText}`);
     }
 
-    _setRateLimited(resetDate) {
-        if (resetDate && !(resetDate instanceof Date)) {
-            resetDate = new Date(resetDate);
-        }
-        this._rateLimitedUntil = resetDate || this._rateLimitedUntil || null;
-        if (this._rateLimitedUntil) {
-            try { localStorage.setItem('rfcp_rate_limited_until', this._rateLimitedUntil.toISOString()); } catch(e){}
-        }
+    this.rateLimitManager.clearRateLimit();
+    return data;
+  }
+
+  /**
+   * Busca um gist específico
+   * @param {string} gistId - ID do gist
+   * @returns {Promise<Object>}
+   */
+  async fetchGist(gistId) {
+    if (this.rateLimitManager.isRateLimited()) {
+      throw new Error('Rate limit ativo. Tente novamente mais tarde.');
     }
 
-    _clearRateLimit() {
-        this._rateLimitedUntil = null;
-        try { localStorage.removeItem('rfcp_rate_limited_until'); } catch(e){}
+    const { response, data } = await HttpClient.githubRequest(`/gists/${gistId}`, this.token);
+    
+    this.rateLimitManager.handleRateLimit(response);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error('Gist não encontrado');
+      }
+      throw new Error(`Erro ao buscar gist: ${response.status} ${response.statusText}`);
     }
 
-    // Configurar sincronização com GitHub
-    async setupSync(token) {
-        if (!token || token.trim() === '') {
-            throw new Error('Token do GitHub é obrigatório');
-        }
+    this.rateLimitManager.clearRateLimit();
+    return data;
+  }
 
-        this.token = token.trim();
-        localStorage.setItem('rfcp_github_token', this.token);
-
-        // Tentar buscar gist existente ou criar novo
-        try {
-            await this.findOrCreateGist();
-            this.syncEnabled = true;
-            return { success: true, message: 'Sincronização configurada com sucesso!' };
-        } catch (error) {
-            this.disable();
-            throw new Error(`Erro ao configurar sincronização: ${error.message}`);
-        }
+  /**
+   * Cria um novo gist
+   * @param {Object} initialData - Dados iniciais
+   * @returns {Promise<Object>}
+   */
+  async createGist(initialData = null) {
+    if (this.rateLimitManager.isRateLimited()) {
+      throw new Error('Rate limit ativo. Tente novamente mais tarde.');
     }
 
-    // Buscar gist existente ou criar novo
-    async findOrCreateGist() {
-        // Ensure a single gist exists for this app/user. This will validate stored gistId,
-        // search existing gists by description and only create a new one if none found.
-        await this.ensureGistExists();
+    const data = initialData || {
+      completedIds: [],
+      completionDates: {},
+      lastModified: new Date().toISOString(),
+      version: '2.0'
+    };
+
+    const payload = {
+      description: SYNC_CONFIG.GIST_DESCRIPTION,
+      public: false,
+      files: {
+        [SYNC_CONFIG.GIST_FILENAME]: {
+          content: JSON.stringify(data, null, 2)
+        }
+      }
+    };
+
+    const { response, data: responseData } = await HttpClient.githubRequest('/gists', this.token, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    this.rateLimitManager.handleRateLimit(response);
+
+    if (!response.ok) {
+      throw new Error(`Erro ao criar gist: ${response.status} ${response.statusText}`);
+    }
+
+    this.gistId = responseData.id;
+    localStorage.setItem(SYNC_CONFIG.STORAGE_KEYS.GIST_ID, this.gistId);
+    this.rateLimitManager.clearRateLimit();
+    
+    console.log('✅ Gist criado:', this.gistId);
+    return responseData;
+  }
+
+  /**
+   * Atualiza um gist existente
+   * @param {string} gistId - ID do gist
+   * @param {Object} data - Dados para atualizar
+   * @returns {Promise<Object>}
+   */
+  async updateGist(gistId, data) {
+    if (this.rateLimitManager.isRateLimited()) {
+      throw new Error('Rate limit ativo. Tente novamente mais tarde.');
+    }
+
+    const dataWithTimestamp = {
+      ...data,
+      lastModified: new Date().toISOString(),
+      version: '2.0'
+    };
+
+    const payload = {
+      files: {
+        [SYNC_CONFIG.GIST_FILENAME]: {
+          content: JSON.stringify(dataWithTimestamp, null, 2)
+        }
+      }
+    };
+
+    const { response, data: responseData } = await HttpClient.githubRequest(`/gists/${gistId}`, this.token, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    this.rateLimitManager.handleRateLimit(response);
+
+    if (!response.ok) {
+      throw new Error(`Erro ao atualizar gist: ${response.status} ${response.statusText}`);
+    }
+
+    this.rateLimitManager.clearRateLimit();
+    return responseData;
+  }
+
+  /**
+   * Busca ou cria um gist para o app
+   * @returns {Promise<string>} ID do gist
+   */
+  async ensureGist() {
+    // Verificar se gist armazenado ainda existe
+    if (this.gistId) {
+      try {
+        await this.fetchGist(this.gistId);
+        console.log('✅ Gist existente validado:', this.gistId);
         return this.gistId;
+      } catch (error) {
+        console.warn('⚠️ Gist armazenado inválido, buscando/criando novo');
+        this.gistId = null;
+        localStorage.removeItem(SYNC_CONFIG.STORAGE_KEYS.GIST_ID);
+      }
     }
 
-    // Ensure a single gist exists: validate stored id, search user's gists, or create one.
-    async ensureGistExists() {
-        // If we have a stored gistId, verify it first
-        if (this.gistId) {
-            try {
-                const resp = await fetch(`https://api.github.com/gists/${this.gistId}`, {
-                    headers: {
-                        'Authorization': `token ${this.token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
+    // Buscar gist existente por descrição
+    try {
+      const gists = await this.fetchUserGists();
+      const existingGist = gists.find(gist => 
+        gist.description === SYNC_CONFIG.GIST_DESCRIPTION &&
+        gist.files[SYNC_CONFIG.GIST_FILENAME]
+      );
 
-                if (resp.ok) {
-                    // gistId is valid
-                    localStorage.setItem('rfcp_gist_id', this.gistId);
-                    console.log('Gist armazenado válido:', this.gistId);
-                    return this.gistId;
-                }
-            } catch (err) {
-                console.warn('Falha ao verificar gist armazenado:', err);
-            }
-
-            // Invalidate stored id and continue
-            this.gistId = null;
-            localStorage.removeItem('rfcp_gist_id');
-        }
-
-        // Search user's gists for one matching our description
-        try {
-            const gists = await this.fetchGists();
-            const existingGist = gists.find(g =>
-                g.description === 'RFCP Study Tracker - Progress Data' &&
-                g.files && g.files['rfcp-progress.json']
-            );
-
-            if (existingGist) {
-                this.gistId = existingGist.id;
-                localStorage.setItem('rfcp_gist_id', this.gistId);
-                console.log('Gist existente encontrado via busca:', this.gistId);
-                return this.gistId;
-            }
-        } catch (err) {
-            console.warn('Busca por gists existentes falhou:', err);
-        }
-
-        // No existing gist found — create one and use it
-        const newGist = await this.createGist();
-        this.gistId = newGist.id;
-        localStorage.setItem('rfcp_gist_id', this.gistId);
-        console.log('Novo Gist criado:', this.gistId);
+      if (existingGist) {
+        this.gistId = existingGist.id;
+        localStorage.setItem(SYNC_CONFIG.STORAGE_KEYS.GIST_ID, this.gistId);
+        console.log('✅ Gist encontrado:', this.gistId);
         return this.gistId;
-    }
-
-    // Buscar todos os gists do usuário
-    async fetchGists() {
-        const response = await fetch('https://api.github.com/gists', {
-            headers: {
-                'Authorization': `token ${this.token}`,
-                'Accept': 'application/vnd.github.v3+json'
-            }
-        });
-
-        if (!response.ok) {
-            const body = await response.text().catch(() => '');
-            const info = this._parseRateLimitInfo(response, body);
-            if (info.isRateLimit) {
-                this._setRateLimited(info.resetDate);
-                const resetMsg = info.resetDate ? ` (resets at ${info.resetDate.toISOString()})` : '';
-                console.error('fetchGists failed: rate limit exceeded' + resetMsg, body);
-                throw new Error(`Rate limit excedido${resetMsg}`);
-            }
-
-            console.error('fetchGists failed:', response.status, body);
-            throw new Error(`Erro ao buscar gists: ${response.status} ${body}`);
-        }
-
-        const json = await response.json();
-        // successful fetch, clear any previous rate-limit state
-        this._clearRateLimit();
-        return json;
+      }
+    } catch (error) {
+      console.warn('⚠️ Erro ao buscar gists existentes:', error.message);
     }
 
     // Criar novo gist
-    async createGist() {
-        const initialData = {
-            completedIds: [],
-            completionDates: {},
-            lastModified: new Date().toISOString()
-        };
-        // Double-check there's not already a gist (race condition avoidance)
-        try {
-            const gists = await this.fetchGists();
-            const existingGist = gists.find(g =>
-                g.description === 'RFCP Study Tracker - Progress Data' &&
-                g.files && g.files['rfcp-progress.json']
-            );
+    const newGist = await this.createGist();
+    return newGist.id;
+  }
 
-            if (existingGist) {
-                console.log('createGist: encontrado gist existente, retornando ele em vez de criar novo:', existingGist.id);
-                return existingGist;
-            }
-        } catch (err) {
-            // ignore and proceed to create
-            console.warn('createGist: não foi possível listar gists, prosseguindo para criar:', err);
-        }
-
-        const response = await fetch('https://api.github.com/gists', {
-            method: 'POST',
-            headers: {
-                'Authorization': `token ${this.token}`,
-                'Accept': 'application/vnd.github.v3+json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                description: 'RFCP Study Tracker - Progress Data',
-                public: false,
-                files: {
-                    'rfcp-progress.json': {
-                        content: JSON.stringify(initialData, null, 2)
-                    }
-                }
-            })
-        });
-
-        if (!response.ok) {
-            const body = await response.text().catch(() => '');
-            const info = this._parseRateLimitInfo(response, body);
-            if (info.isRateLimit) {
-                this._setRateLimited(info.resetDate);
-                const resetMsg = info.resetDate ? ` (resets at ${info.resetDate.toISOString()})` : '';
-                console.error('createGist failed: rate limit exceeded' + resetMsg, body);
-                throw new Error(`Rate limit excedido${resetMsg}`);
-            }
-
-            console.error('createGist failed:', response.status, body);
-            throw new Error(`Erro ao criar gist: ${response.status} ${body}`);
-        }
-
-        const json = await response.json();
-        // Persist the created gist id so subsequent calls reuse the same gist
-        try {
-            if (json && json.id) {
-                this.gistId = json.id;
-                try { localStorage.setItem('rfcp_gist_id', this.gistId); } catch (e) {}
-            }
-        } catch (e) {
-            // ignore persistence errors
-        }
-        this._clearRateLimit();
-        console.log('createGist: gist criado com id', this.gistId || (json && json.id));
-        return json;
+  /**
+   * Deleta um gist
+   * @param {string} gistId - ID do gist
+   * @returns {Promise<boolean>}
+   */
+  async deleteGist(gistId) {
+    if (this.rateLimitManager.isRateLimited()) {
+      throw new Error('Rate limit ativo. Tente novamente mais tarde.');
     }
 
-    // Sincronizar progresso local com remoto
-    async sync(localData) {
-        if (!this.syncEnabled || this.syncInProgress) {
-            return localData;
-        }
+    const { response } = await HttpClient.githubRequest(`/gists/${gistId}`, this.token, {
+      method: 'DELETE'
+    });
 
-        this.syncInProgress = true;
+    this.rateLimitManager.handleRateLimit(response);
 
-        try {
-            // Buscar dados remotos
-            const remoteData = await this.fetchRemoteProgress();
-
-            // Resolver conflitos (última modificação ganha)
-            const mergedData = this.mergeProgress(localData, remoteData);
-
-            // Salvar dados mesclados remotamente
-            await this.saveRemoteProgress(mergedData);
-
-            this.lastSync = new Date().toISOString();
-            this.syncInProgress = false;
-
-            return mergedData;
-        } catch (error) {
-            console.error('Erro na sincronização:', error);
-            this.syncInProgress = false;
-            throw error;
-        }
+    if (response.ok || response.status === 404) {
+      this.rateLimitManager.clearRateLimit();
+      return true;
     }
 
-    // Buscar progresso remoto
-    async fetchRemoteProgress() {
-        // Ensure we have a valid gist id first (will create/find one if necessary)
-        if (!this.gistId) {
-            await this.ensureGistExists();
-            if (!this.gistId) throw new Error('Gist ID não configurado');
-        }
-
-        // Try to fetch the gist; if not found, try to recover by ensuring gist exists and retry once
-        let response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
-            headers: {
-                'Authorization': `token ${this.token}`,
-                'Accept': 'application/vnd.github.v3+json'
-            }
-        });
-
-        if (!response.ok) {
-            const body = await response.text().catch(() => '');
-            const info = this._parseRateLimitInfo(response, body);
-            if (info.isRateLimit) {
-                this._setRateLimited(info.resetDate);
-                const resetMsg = info.resetDate ? ` (resets at ${info.resetDate.toISOString()})` : '';
-                console.error('fetchRemoteProgress failed: rate limit exceeded' + resetMsg, body);
-                throw new Error(`Rate limit excedido${resetMsg}`);
-            }
-
-            console.warn('fetchRemoteProgress failed:', response.status, body);
-
-            if (response.status === 404) {
-                // ensureGistExists will try to find an existing gist or create one if truly missing
-                await this.ensureGistExists();
-                response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
-                    headers: {
-                        'Authorization': `token ${this.token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-
-                if (!response.ok) {
-                    const body2 = await response.text().catch(() => '');
-                    throw new Error(`Erro ao buscar progresso remoto (após tentativa): ${response.status} ${body2}`);
-                }
-            } else {
-                throw new Error(`Erro ao buscar progresso remoto: ${response.status} ${body}`);
-            }
-        }
-
-        const gist = await response.json();
-        this._clearRateLimit();
-        const content = gist.files['rfcp-progress.json'].content;
-        return JSON.parse(content);
-    }
-
-    // Salvar progresso remotamente
-    async saveRemoteProgress(data) {
-        if (!this.gistId) {
-            throw new Error('Gist ID não configurado');
-        }
-
-        const dataWithTimestamp = {
-            ...data,
-            lastModified: new Date().toISOString()
-        };
-
-        const response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
-            method: 'PATCH',
-            headers: {
-                'Authorization': `token ${this.token}`,
-                'Accept': 'application/vnd.github.v3+json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                files: {
-                    'rfcp-progress.json': {
-                        content: JSON.stringify(dataWithTimestamp, null, 2)
-                    }
-                }
-            })
-        });
-        if (!response.ok) {
-            const body = await response.text().catch(() => '');
-            const info = this._parseRateLimitInfo(response, body);
-            if (info.isRateLimit) {
-                this._setRateLimited(info.resetDate);
-                const resetMsg = info.resetDate ? ` (resets at ${info.resetDate.toISOString()})` : '';
-                console.error('saveRemoteProgress failed: rate limit exceeded' + resetMsg, body);
-                throw new Error(`Rate limit excedido${resetMsg}`);
-            }
-
-            console.warn('saveRemoteProgress failed:', response.status, body);
-
-            if (response.status === 404 || response.status === 409) {
-                // Attempt to recover by ensuring a single gist exists, then retry once
-                await this.ensureGistExists();
-
-                const retryResp = await fetch(`https://api.github.com/gists/${this.gistId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': `token ${this.token}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        files: {
-                            'rfcp-progress.json': {
-                                content: JSON.stringify(dataWithTimestamp, null, 2)
-                            }
-                        }
-                    })
-                });
-
-                if (!retryResp.ok) {
-                    const retryBody = await retryResp.text().catch(() => '');
-                    // Check rate-limit on retry
-                    const retryInfo = this._parseRateLimitInfo(retryResp, retryBody);
-                    if (retryInfo.isRateLimit) {
-                        this._setRateLimited(retryInfo.resetDate);
-                        const resetMsg2 = retryInfo.resetDate ? ` (resets at ${retryInfo.resetDate.toISOString()})` : '';
-                        console.error('saveRemoteProgress retry failed: rate limit exceeded' + resetMsg2, retryBody);
-                        throw new Error(`Rate limit excedido${resetMsg2}`);
-                    }
-
-                    console.error('saveRemoteProgress retry failed:', retryResp.status, retryBody);
-                    throw new Error(`Erro ao salvar progresso remoto (retry): ${retryResp.status} ${retryBody}`);
-                }
-
-                const retryJson = await retryResp.json();
-                this._clearRateLimit();
-                return retryJson;
-            }
-
-            throw new Error(`Erro ao salvar progresso remoto: ${response.status} ${body}`);
-        }
-
-        const json = await response.json();
-        this._clearRateLimit();
-        return json;
-    }
-
-    // Mesclar progresso local e remoto
-    mergeProgress(local, remote) {
-        // Se não houver dados remotos, usar local
-        if (!remote || !remote.completedIds) {
-            return local;
-        }
-
-        // Se não houver dados locais, usar remoto
-        if (!local || !local.completedIds) {
-            return remote;
-        }
-
-        // Mesclar IDs completados (união)
-        const allCompletedIds = [...new Set([
-            ...local.completedIds,
-            ...remote.completedIds
-        ])];
-
-        // Mesclar datas de conclusão (mais recente ganha)
-        const mergedDates = { ...remote.completionDates };
-        
-        Object.entries(local.completionDates).forEach(([id, date]) => {
-            if (!mergedDates[id] || new Date(date) > new Date(mergedDates[id])) {
-                mergedDates[id] = date;
-            }
-        });
-
-        return {
-            completedIds: allCompletedIds,
-            completionDates: mergedDates
-        };
-    }
-
-    // Desabilitar sincronização
-    disable() {
-        this.syncEnabled = false;
-        this.token = null;
-        this.gistId = null;
-        localStorage.removeItem('rfcp_github_token');
-        localStorage.removeItem('rfcp_gist_id');
-    }
-
-    // Verificar status da sincronização
-    getStatus() {
-        return {
-            enabled: this.syncEnabled,
-            lastSync: this.lastSync,
-            gistId: this.gistId,
-            inProgress: this.syncInProgress,
-            rateLimitedUntil: this._rateLimitedUntil ? this._rateLimitedUntil.toISOString() : null
-        };
-    }
-
-    // Força sincronização manual
-    async forceSyncFromLocal(localData) {
-        if (!this.syncEnabled) {
-            throw new Error('Sincronização não está habilitada');
-        }
-
-        await this.saveRemoteProgress(localData);
-        this.lastSync = new Date().toISOString();
-        return { success: true, message: 'Sincronização manual concluída!' };
-    }
-
-    // Força download do remoto (sobrescreve local)
-    async forceSyncFromRemote() {
-        if (!this.syncEnabled) {
-            throw new Error('Sincronização não está habilitada');
-        }
-
-        const remoteData = await this.fetchRemoteProgress();
-        this.lastSync = new Date().toISOString();
-        return remoteData;
-    }
+    throw new Error(`Erro ao deletar gist: ${response.status} ${response.statusText}`);
+  }
 }
 
-// Export singleton instance
-window.SyncManager = SyncManager;
+/**
+ * Classe principal para gerenciamento de sincronização
+ */
+class SyncManager {
+  constructor() {
+    this.token = localStorage.getItem(SYNC_CONFIG.STORAGE_KEYS.TOKEN);
+    this.syncEnabled = !!this.token;
+    this.lastSync = null;
+    this.syncInProgress = false;
+    
+    this.rateLimitManager = new RateLimitManager();
+    this.gistManager = this.token ? new GistManager(this.token, this.rateLimitManager) : null;
+  }
+
+  /**
+   * Configura a sincronização com um token
+   * @param {string} token - Token do GitHub
+   * @returns {Promise<Object>}
+   */
+  async setupSync(token) {
+    if (!token?.trim()) {
+      throw new Error('Token é obrigatório');
+    }
+
+    this.token = token.trim();
+    this.gistManager = new GistManager(this.token, this.rateLimitManager);
+
+    try {
+      // Testar o token
+      await this.testToken();
+      
+      // Garantir que existe um gist
+      await this.gistManager.ensureGist();
+      
+      // Salvar configurações
+      localStorage.setItem(SYNC_CONFIG.STORAGE_KEYS.TOKEN, this.token);
+      this.syncEnabled = true;
+      
+      console.log('✅ Sincronização configurada com sucesso');
+      return {
+        success: true,
+        message: 'Sincronização configurada com sucesso!'
+      };
+    } catch (error) {
+      console.error('❌ Erro ao configurar sincronização:', error);
+      throw new Error(`Erro na configuração: ${error.message}`);
+    }
+  }
+
+  /**
+   * Testa se o token é válido
+   * @returns {Promise<boolean>}
+   */
+  async testToken() {
+    if (!this.token) {
+      throw new Error('Token não configurado');
+    }
+
+    const { response } = await HttpClient.githubRequest('/user', this.token);
+    
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('Token inválido ou expirado');
+      }
+      throw new Error(`Erro na validação do token: ${response.status}`);
+    }
+
+    return true;
+  }
+
+  /**
+   * Sincroniza dados locais com remotos
+   * @param {Object} localData - Dados locais
+   * @returns {Promise<Object>} Dados sincronizados
+   */
+  async sync(localData) {
+    if (!this.syncEnabled || this.syncInProgress) {
+      return localData;
+    }
+
+    if (this.rateLimitManager.isRateLimited()) {
+      console.warn('⚠️ Rate limit ativo, pulando sincronização');
+      return localData;
+    }
+
+    this.syncInProgress = true;
+
+    try {
+      console.log('🔄 Iniciando sincronização...');
+      
+      // Buscar dados remotos
+      const remoteData = await this.fetchRemoteProgress();
+      
+      // Mesclar dados
+      const mergedData = this.mergeProgress(localData, remoteData);
+      
+      // Salvar dados mesclados remotamente se houve mudanças
+      if (this.hasChanges(localData, mergedData)) {
+        await this.saveRemoteProgress(mergedData);
+      }
+      
+      this.lastSync = new Date().toISOString();
+      console.log('✅ Sincronização concluída');
+      
+      return mergedData;
+    } catch (error) {
+      console.error('❌ Erro na sincronização:', error);
+      throw error;
+    } finally {
+      this.syncInProgress = false;
+    }
+  }
+
+  /**
+   * Busca o progresso remoto
+   * @returns {Promise<Object>}
+   */
+  async fetchRemoteProgress() {
+    if (!this.gistManager) {
+      throw new Error('Gist manager não inicializado');
+    }
+
+    const gistId = await this.gistManager.ensureGist();
+    const gist = await this.gistManager.fetchGist(gistId);
+    
+    const file = gist.files[SYNC_CONFIG.GIST_FILENAME];
+    if (!file) {
+      throw new Error('Arquivo de progresso não encontrado no gist');
+    }
+
+    try {
+      return JSON.parse(file.content);
+    } catch (error) {
+      console.error('❌ Erro ao parsear dados remotos:', error);
+      throw new Error('Dados remotos corrompidos');
+    }
+  }
+
+  /**
+   * Salva o progresso remotamente
+   * @param {Object} data - Dados para salvar
+   * @returns {Promise<Object>}
+   */
+  async saveRemoteProgress(data) {
+    if (!this.gistManager) {
+      throw new Error('Gist manager não inicializado');
+    }
+
+    const gistId = await this.gistManager.ensureGist();
+    return await this.gistManager.updateGist(gistId, data);
+  }
+
+  /**
+   * Mescla progresso local e remoto
+   * @param {Object} local - Dados locais
+   * @param {Object} remote - Dados remotos
+   * @returns {Object} Dados mesclados
+   */
+  mergeProgress(local, remote) {
+    // Se não há dados remotos, usar locais
+    if (!remote?.completedIds) {
+      return local || { completedIds: [], completionDates: {} };
+    }
+
+    // Se não há dados locais, usar remotos
+    if (!local?.completedIds) {
+      return remote;
+    }
+
+    // Mesclar IDs (união)
+    const allCompletedIds = [...new Set([
+      ...local.completedIds,
+      ...remote.completedIds
+    ])];
+
+    // Mesclar datas (mais recente prevalece)
+    const mergedDates = { ...remote.completionDates };
+    
+    Object.entries(local.completionDates || {}).forEach(([id, date]) => {
+      if (!mergedDates[id] || new Date(date) > new Date(mergedDates[id])) {
+        mergedDates[id] = date;
+      }
+    });
+
+    return {
+      completedIds: allCompletedIds,
+      completionDates: mergedDates
+    };
+  }
+
+  /**
+   * Verifica se houve mudanças entre dois conjuntos de dados
+   * @param {Object} oldData - Dados antigos
+   * @param {Object} newData - Dados novos
+   * @returns {boolean}
+   */
+  hasChanges(oldData, newData) {
+    if (!oldData || !newData) return true;
+    
+    return (
+      JSON.stringify(oldData.completedIds?.sort()) !== JSON.stringify(newData.completedIds?.sort()) ||
+      JSON.stringify(oldData.completionDates) !== JSON.stringify(newData.completionDates)
+    );
+  }
+
+  /**
+   * Força sincronização de dados locais
+   * @param {Object} localData - Dados locais
+   * @returns {Promise<Object>}
+   */
+  async forceSyncFromLocal(localData) {
+    if (!this.syncEnabled) {
+      throw new Error('Sincronização não está habilitada');
+    }
+
+    await this.saveRemoteProgress(localData);
+    this.lastSync = new Date().toISOString();
+    
+    return {
+      success: true,
+      message: 'Dados enviados com sucesso!'
+    };
+  }
+
+  /**
+   * Força download de dados remotos
+   * @returns {Promise<Object>}
+   */
+  async forceSyncFromRemote() {
+    if (!this.syncEnabled) {
+      throw new Error('Sincronização não está habilitada');
+    }
+
+    const remoteData = await this.fetchRemoteProgress();
+    this.lastSync = new Date().toISOString();
+    
+    return remoteData;
+  }
+
+  /**
+   * Desabilita a sincronização
+   */
+  disable() {
+    this.syncEnabled = false;
+    this.token = null;
+    this.gistManager = null;
+    
+    try {
+      localStorage.removeItem(SYNC_CONFIG.STORAGE_KEYS.TOKEN);
+      localStorage.removeItem(SYNC_CONFIG.STORAGE_KEYS.GIST_ID);
+      console.log('✅ Sincronização desabilitada');
+    } catch (error) {
+      console.warn('⚠️ Erro ao limpar dados de sincronização:', error);
+    }
+  }
+
+  /**
+   * Retorna o status atual da sincronização
+   * @returns {Object}
+   */
+  getStatus() {
+    const rateLimitStatus = this.rateLimitManager.getStatus();
+    
+    return {
+      enabled: this.syncEnabled,
+      lastSync: this.lastSync,
+      gistId: this.gistManager?.gistId || null,
+      inProgress: this.syncInProgress,
+      rateLimitedUntil: rateLimitStatus.isLimited ? rateLimitStatus.resetTime?.toISOString() : null
+    };
+  }
+
+  /**
+   * Limpa todos os dados de sincronização
+   * @returns {Promise<void>}
+   */
+  async cleanup() {
+    if (this.gistManager?.gistId) {
+      try {
+        await this.gistManager.deleteGist(this.gistManager.gistId);
+        console.log('✅ Gist deletado');
+      } catch (error) {
+        console.warn('⚠️ Erro ao deletar gist:', error);
+      }
+    }
+    
+    this.disable();
+    this.rateLimitManager.clearRateLimit();
+  }
+}
+
+// Exportar como singleton
+if (typeof window !== 'undefined') {
+  window.SyncManager = SyncManager;
+}
+
+// Exportar para ambientes Node.js se necessário
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { SyncManager, HttpClient, RateLimitManager, GistManager };
+}
